@@ -12,6 +12,10 @@ OBS-Studio --> RestreamServer -->|--->  WebServer-03 <---|                      
 Als RestreamServer und WebServer will ich virtuelle Cloud Server nutzen. Diese gibt es z.B. bei Hetzner schon ab 4,- Euro im Monat bzw. für sehr wenige Cent pro Stunde. Unser System soll für den jeweiligen Livestream jeweils neu hochgefahren und danach wieder gelöscht werden, um die virtuellen Maschinen nur dann zu nutzen, wenn sie benötigt werden. 
 Infos zu den Hetzner Cloud-Servern: https://www.hetzner.com/de/cloud?country=de  
 Load-Balancer gibt es bei Hetzner auch schon fertig: https://www.hetzner.com/de/cloud/load-balancer  
+
+**Ich empfehle, die einzelnen Server zuerst lokal, z.B. mit VirtualBox, zu testen, anzupassen und zu optimieren. Im Folgenden werden jeweils sehr einfache Konfigurationsbeispiele gezeigt. Vorausgesetzt wird ein grundlegendes Verständnis eines Linuxsystems. Ich habe als Basis für die WebServer und RestreamServer Ubuntu 20.04 LTS genutzt.**  
+`cat /etc/*release` -> **PRETTY_NAME="Ubuntu 20.04.4 LTS"**  
+
 ## WebServer
 >HTTP Live Streaming mit HLS  
 
