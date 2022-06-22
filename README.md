@@ -13,7 +13,8 @@ Als RestreamServer und WebServer will ich virtuelle Cloud Server nutzen. Diese g
 Infos zu den Hetzner Cloud-Servern: https://www.hetzner.com/de/cloud?country=de  
 Load-Balancer gibt es bei Hetzner auch schon fertig: https://www.hetzner.com/de/cloud/load-balancer  
 
-**Ich empfehle, die einzelnen Server zuerst lokal, z.B. mit VirtualBox, zu testen, anzupassen und zu optimieren. Im Folgenden werden jeweils sehr einfache Konfigurationsbeispiele gezeigt. Vorausgesetzt wird ein grundlegendes Verständnis eines Linuxsystems. Ich habe als Basis für die WebServer und RestreamServer Ubuntu 20.04 LTS genutzt.**  
+**Ich empfehle, die einzelnen Server zuerst lokal, z.B. mit VirtualBox, zu testen, anzupassen und zu optimieren. Im Folgenden werden jeweils sehr einfache Konfigurationsbeispiele gezeigt. Vorausgesetzt wird ein grundlegendes Verständnis eines Linuxsystems. Ich werde nginx nicht erklären. Dafür gibt es hier Infos:  https://www.nginx.com/resources/library/complete-nginx-cookbook/   
+Ich habe als Basis für die WebServer und RestreamServer Ubuntu 20.04 LTS genutzt.**  
 `cat /etc/*release` -> **PRETTY_NAME="Ubuntu 20.04.4 LTS"**  
 
 ## WebServer
@@ -83,14 +84,17 @@ types {
 }
 ```
 danach:
+`sudo mkdir /var/www/html/stream`  
+
+Zusätzlich kann das Statistikmodul für Testzwecke aktiviert werden: 
 ```
 sudo mkdir /var/www/html/rtmp
 sudo gunzip -c /usr/share/doc/libnginx-mod-rtmp/examples/stat.xsl.gz > /var/www/html/rtmp/stat.xsl
 sudo ln -s /etc/nginx/sites-available/rtmp /etc/nginx/sites-enabled/rtmp
-sudo mkdir /var/www/html/stream
 ```
 anschließend:
 `sudo systemctl reload nginx`  
+
 Mit `nano /var/www/html/index.html` eine Webseite erstellen, indem du das Folgende in diese Datei einfügst:  
 ```
 <!DOCTYPE html>
@@ -130,5 +134,9 @@ Mit `nano /var/www/html/index.html` eine Webseite erstellen, indem du das Folgen
     </video>
 </body>
 ```
+
+Mein WebServer-01 in VirtualBox hat die IP-Adresse **192.168.55.101**  
+Die Statistikdaten kannn ich im Browser so abrufen: **http://192.168.55.101:8080/stat** 
+Die Webseite mit dem Videostream könnte ich mir so anzeigen lassen: **http://192.168.55.101/**  
 
 ## RestreamServer 
