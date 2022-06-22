@@ -13,7 +13,7 @@ Als RestreamServer und WebServer will ich virtuelle Cloud Server nutzen. Diese g
 Infos zu den Hetzner Cloud-Servern: https://www.hetzner.com/de/cloud?country=de  
 Load-Balancer gibt es bei Hetzner auch schon fertig: https://www.hetzner.com/de/cloud/load-balancer  
 
-**Ich empfehle, die einzelnen Server zuerst lokal, z.B. mit VirtualBox, zu testen, anzupassen und zu optimieren. Im Folgenden werden jeweils sehr einfache Konfigurationsbeispiele gezeigt. Vorausgesetzt wird ein grundlegendes Verständnis eines Linuxsystems. Ich werde nginx nicht erklären. Dafür gibt es hier Infos:  https://www.nginx.com/resources/library/complete-nginx-cookbook/   
+**Ich empfehle, die einzelnen Server zuerst lokal, z.B. mit VirtualBox, zu testen, anzupassen und zu optimieren. Im Folgenden werden jeweils sehr einfache Konfigurationsbeispiele gezeigt. Vorausgesetzt wird ein grundlegendes Verständnis eines Linuxsystems. Ich werde nginx nicht erklären. Dafür gibt es z.B. hier aktuelle Infos:  https://www.nginx.com/resources/library/complete-nginx-cookbook/   
 Ich habe als Basis für die WebServer und RestreamServer Ubuntu 20.04 LTS genutzt.**  
 `cat /etc/*release` -> **PRETTY_NAME="Ubuntu 20.04.4 LTS"**  
 
@@ -23,6 +23,7 @@ Ich habe als Basis für die WebServer und RestreamServer Ubuntu 20.04 LTS genutz
 Quellen:  
 https://www.digitalocean.com/community/tutorials/how-to-set-up-a-video-streaming-server-using-nginx-rtmp-on-ubuntu-20-04  
 https://github.com/arut/nginx-rtmp-module
+https://nginx.org/
 ```
 sudo apt install nginx
 sudo apt install libnginx-mod-rtmp
