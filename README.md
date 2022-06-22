@@ -13,8 +13,10 @@ Als RestreamServer und WebServer will ich virtuelle Cloud Server nutzen. Diese g
 Infos zu den Hetzner Cloud-Servern: https://www.hetzner.com/de/cloud?country=de  
 Load-Balancer gibt es bei Hetzner auch schon fertig: https://www.hetzner.com/de/cloud/load-balancer  
 ## WebServer
+>HTTP Live Streaming mit HLS  
+
 Quellen:  
-https://www.digitalocean.com/community/tutorials/how-to-set-up-a-video-streaming-server-using-nginx-rtmp-on-ubuntu-20-04
+https://www.digitalocean.com/community/tutorials/how-to-set-up-a-video-streaming-server-using-nginx-rtmp-on-ubuntu-20-04  
 https://github.com/arut/nginx-rtmp-module
 ```
 sudo apt install nginx
@@ -85,5 +87,44 @@ sudo mkdir /var/www/html/stream
 ```
 anschließend:
 `sudo systemctl reload nginx`  
+Mit `nano /var/www/html/index.html` eine Webseite erstellen, indem du das Folgende in diese Datei einfügst:  
+```
+<!DOCTYPE html>
+<html lang="de">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://vjs.zencdn.net/7.19.2/video-js.css" rel="stylesheet" />
+    <title>HTTP Live Streaming Example</title>
+    <style>
+        body {
+            background: #4C4C4C;
+            color: white;
+            font-family: Verdana, Geneva, sans-serif;
+        }
+        h1 {
+            background-color: #1F1E1F;
+        }
+        h2 {
+            background-color: #3A393A;
+        }
+        section {
+            background-color: #464546;
+        }
+        .video-js {
+            margin-left: auto;
+            margin-right: auto;
+        }
+    </style>
+</head>
+
+<body>
+    <script src="https://vjs.zencdn.net/7.19.2/video.js"></script>
+    <video id="my-player" class="video-js" controls="true" preload="auto" auto="true" width="960" height="540" data-setup='{}'>
+      <source src="http://192.168.55.101/stream/hls/.m3u8" type="application/x-mpegURL"></source>
+    </video>
+</body>
+```
 
 ## RestreamServer 
