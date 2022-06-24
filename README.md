@@ -124,6 +124,8 @@ Mit `nano /var/www/html/index.html` eine Webseite erstellen, indem du das Folgen
             background-color: #464546;
         }
         .video-js {
+            width: 95vw;
+            height: 95vh;
             margin-left: auto;
             margin-right: auto;
         }
@@ -132,10 +134,11 @@ Mit `nano /var/www/html/index.html` eine Webseite erstellen, indem du das Folgen
 
 <body>
     <script src="https://vjs.zencdn.net/7.19.2/video.js"></script>
-    <video id="my-player" class="video-js" controls="true" preload="auto" auto="true" width="960" height="540" data-setup='{}'>
+    <video id="my-player" class="video-js" controls="true" preload="true" autoplay="any" width="auto" height="auto" data-setup='{}'>
       <source src="http://192.168.55.101/stream/hls/.m3u8" type="application/x-mpegURL"></source>
     </video>
 </body>
+
 ```
 
 Mein WebServer-01 in VirtualBox hat die IP-Adresse **192.168.55.101**  
