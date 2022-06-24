@@ -177,4 +177,31 @@ PS: Wir reden hier von wenigen Hundert Zuschauern. Wenn du viele Tausend Zuschau
 
 >So wie die Thema Sicherheit sind die Themen Skalierung und Hochverfügbarkeit nicht Bestandteil dieser Anleitung!  
 
+## PHP installieren und aktivieren
+PHP können wir nutzen, um eigene Skripte für die automatische Skalierung zu verwenden.
+```
+# Installieren
+sudo apt install php-fpm
+```
+und aktivieren:  
+Die Datei /etc/nginx/sites-enabled/default öffnen und innerhalb der Server-Blocks die Auskommentierung vor "location ~ \.php$" ... entfernen. So sollte es dann aussehen.  
+```
+        # pass PHP scripts to FastCGI server
+        #
+        # pass PHP scripts to FastCGI server
+        #
+        location ~ \.php$ {
+                include snippets/fastcgi-php.conf;
 
+                # With php-fpm (or other unix sockets):
+                fastcgi_pass unix:/var/run/php/php7.4-fpm.sock;
+        #       # With php-cgi (or other tcp sockets):
+        #       fastcgi_pass 127.0.0.1:9000;
+        }
+```
+und in der folgenden Zeile "index.php" hinzufügen:
+```
+        # Add index.php to the list if you are using PHP
+        index index.html index.htm index.nginx-debian.html;
+```
+Danach die Konfiguration testen mit `nginx-t` und anschließend `nginx -s reload`  
