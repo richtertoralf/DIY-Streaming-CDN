@@ -143,7 +143,7 @@ Mit `nano /var/www/html/index.html` eine Webseite erstellen, indem du das Folgen
 
 Mein WebServer-01 in VirtualBox hat die IP-Adresse **192.168.55.101**  
 Die Statistikdaten kannn ich im Browser so abrufen: **http://192.168.55.101:8080/stat** 
-Die Webseite mit dem Videostream könnte ich mir so anzeigen lassen: **http://192.168.55.101/**  
+Die Webseite mit dem Videostream kann ich mir so anzeigen lassen: **http://192.168.55.101/**  
 
 ## RestreamServer 
 ```
@@ -172,10 +172,11 @@ rtmp {
 ```
 Der Name der Application ist freigewählt. Im Produktiveinsatz verwende ich hier jeweils zufällig generierte Strings um die Sicherheit zu erhöhen. 
 **Hinter push füge ich jeweils die IP-Adressen meiner Webserver ein.**  
-Im Produktiveinsatz werden hier per Script automatisch weitere Server eingebunden, wenn z.B. die Zuschauerzahl steigt. Ich kann grundsätzlich in zwei Richtungen Skalieren. Ich kann z.B. die Webserver vergrößern, indem ich mehr Kerne hinzufüge. Das Hauptproblemm ist aber die Bandbreite. Üblicherweise ist die Bandbreite pro virtuellem Server beschränkt. Indem ich mehrere Webserver hochfahre und die Useranfragen auf die Webserver gleichmäßig verteile, kann ich den Bandbreitenflaschenhals umgehen.  
-PS: Wir reden hier von wenigen Hundert Zuschauern. Wenn du viele Tausend Zuschauer gleichzeitig erwartest, sind paar grundsätzliche Infrastrukturthemen zu klären.  
+Im Produktiveinsatz werden hier per Script automatisch weitere Server eingebunden, wenn z.B. die Zuschauerzahl steigt.  
+Ich kann grundsätzlich in zwei Richtungen Skalieren. Ich kann z.B. die Leistung der einzelnen Webserver vergrößern, indem ich z.B. mehr Kerne hinzufüge. Das Hauptproblemm ist vermutlich aber die Bandbreite. Üblicherweise ist die Bandbreite pro virtuellem Server beschränkt. Indem ich mehrere Webserver hochfahre und die Useranfragen auf die Webserver gleichmäßig verteile, kann ich den Bandbreitenflaschenhals umgehen. Hetzner betreibt z.B. in Europa an drei verschiedenen Standorten Rechenzentren. Dort könnte ich jeweils Webserver hochfahren und per RestreamServer mit dem Content versorgen.    
+PS: Wir reden hier übrigens erstmal von wenigen Hundert Zuschauern. Wenn du viele Tausend Zuschauer gleichzeitig erwartest, sind paar grundsätzliche Infrastrukturthemen mit dem Hoster zu klären.  
 
->So wie die Thema Sicherheit sind die Themen Skalierung und Hochverfügbarkeit nicht Bestandteil dieser Anleitung!  
+>So wie die Thema Sicherheit, sind die Themen Skalierung und Hochverfügbarkeit nicht Bestandteil dieser Anleitung!  
 
 ## PHP installieren und aktivieren
 PHP können wir nutzen, um eigene Skripte für die automatische Skalierung zu verwenden.
