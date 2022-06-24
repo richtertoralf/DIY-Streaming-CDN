@@ -146,3 +146,35 @@ Die Statistikdaten kannn ich im Browser so abrufen: **http://192.168.55.101:8080
 Die Webseite mit dem Videostream könnte ich mir so anzeigen lassen: **http://192.168.55.101/**  
 
 ## RestreamServer 
+```
+sudo apt install nginx
+sudo apt install libnginx-mod-rtmp
+```
+Per `sudo nano /etc/nginx/nginx.conf` ergänze ich die Standardkonfigurationsdatei gleich am Anfang hinter `include /etc/nginx/modules-enabled/*.conf;` um folgende Zeile:
+`include /etc/nginx/rtmp.conf;`  
+und füge eine eigene Konfigurationsdatei im Verzeichnis `/etc/nginx/` mit `sudo nano /etc/nginx/rtmp.conf mit Folgendem Inhalt hinzu. 
+```
+rtmp {
+  server {
+    listen 1935;
+    chunk_size 4096;
+    application restream {
+      live on;
+      wait_video on;
+      publish_notify on;
+      drop_idle_publisher 10s;
+      record off;
+      push rtmp://192.168.55.101/live;
+      push rtmp://192.168.55.102/live;
+      push rtmp://192.168.55.103/live;
+    }
+  }
+```
+Der Name der Application ist freigewählt. Im Produktiveinsatz verwende ich hier jeweils zufällig generierte Strings um die Sicherheit zu erhöhen. 
+**Hinter push füge ich jeweils die IP-Adressen meiner Webserver ein.**  
+Im Produktiveinsatz werden hier per Script automatisch weitere Server eingebunden, wenn z.B. die Zuschauerzahl steigt. Ich kann grundsätzlich in zwei Richtungen Skalieren. Ich kann z.B. die Webserver vergrößern, indem ich mehr Kerne hinzufüge. Das Hauptproblemm ist aber die Bandbreite. Üblicherweise ist die Bandbreite pro virtuellem Server beschränkt. Indem ich mehrere Webserver hochfahre und die Useranfragen auf die Webserver gleichmäßig verteile, kann ich den Bandbreitenflaschenhals umgehen.  
+PS: Wir reden hier von wenigen Hundert Zuschauern. Wenn du viele Tausend Zuschauer gleichzeitig erwartest, sind paar grundsätzliche Infrastrukturthemen zu klären.  
+
+>So wie die Thema Sicherheit sind die Themen Skalierung und Hochverfügbarkeit nicht Bestandteil dieser Anleitung!  
+
+
