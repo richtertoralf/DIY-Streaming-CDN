@@ -184,7 +184,7 @@ PHP können wir nutzen, um eigene Skripte für die automatische Skalierung zu ve
 sudo apt install php-fpm
 ```
 und aktivieren:  
-Die Datei /etc/nginx/sites-enabled/default öffnen und innerhalb der Server-Blocks die Auskommentierung vor "location ~ \.php$" ... entfernen. So sollte es dann aussehen.  
+Die Datei mit `nano /etc/nginx/sites-enabled/default` öffnen und innerhalb des Server-Blocks die Auskommentierung vor "location ~ \.php$" ... entfernen. So sollte es dann aussehen.  
 ```
         # pass PHP scripts to FastCGI server
         #
@@ -205,3 +205,31 @@ und in der folgenden Zeile "index.php" hinzufügen:
         index index.html index.htm index.nginx-debian.html;
 ```
 Danach die Konfiguration testen mit `nginx-t` und anschließend `nginx -s reload`  
+
+## Webserver um PHP ergänzen
+Ich erstelle ein Verzeichnis und eine php-Datei:  
+```
+mkdir /var/www/html/php
+nano /var/www/html/php/serverADDR.php
+```
+mit folgendem Inhalt:
+```
+<?php
+$ip_server = $_SERVER['SERVER_ADDR'];
+echo "Die Server IP Adresse ist: $ip_server";
+?>
+```
+Damit kann ich mir zum Testen z.B. die jeweilige IP-Adresse des Webservers direkt im Browser anzeigen lassen.  
+Anschließend ergänze ich unsere **index.html Datei** mit `nano /var/www/html/index.html` um die Zeile: `<p> <?php include '/var/www/html/php/serverADDR.php';?> </p>`. Das sieht dann so aus:  
+```
+<body>
+  <section>
+    <p> <?php include '/var/www/html/php/serverADDR.php';?> </p>
+    <script src="https://vjs.zencdn.net/7.19.2/video.js"></script>
+    <video id="my-player" class="video-js" controls="true" preload="true" autoplay="any" width="auto" height="auto" data-setup='{}'>
+      <source src="http://192.168.55.101/stream/hls/.m3u8" type="application/x-mpegURL"></source>
+    </video>
+  </section>
+</body>
+```
+**Damit die PHP-Zeile funktioniert, benenne ich die index.html noch in index.php um: `mv index.html index.php`**  
