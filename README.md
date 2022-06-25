@@ -217,7 +217,7 @@ und in der folgenden Zeile "index.php" hinzufügen:
 ```
 Danach die Konfiguration testen mit `nginx-t` und anschließend `nginx -s reload`  
 
-### Webserver um PHP ergänzen
+### Webserver um PHP-Skripte ergänzen
 Im Folgenden folgen paar Spielereien mit PHP und JavaScript, die für unser "DIY-Streaming-CDN" nicht unbedingt notwendig sind, aber Spaß machen.
 #### IP-Adresse des Servers auf der Webseite anzeigen
 Ich erstelle ein zusätzliches Verzeichnis und eine php-Datei:  
