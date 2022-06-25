@@ -147,9 +147,9 @@ Die Statistikdaten kannn ich im Browser so abrufen: **http://192.168.55.101:8080
 Die Webseite mit dem Videostream kann ich mir so anzeigen lassen: **http://192.168.55.101/**   
 Dazu benötige ich aber erst noch einen Videostream. Zum Testen kann ich mir dazu z.B. per **OBS Studio** einen Stream zum Webserver schicken. Dazu öffne ich in OBS-Studio die Einstellungen -> Stream -> und gebe hinter Server die Adresse unseres Webservers und den Namen unserer rtmp-Application ein: **rtmp://192.168.55.101/live** Danach starte ich den Stream in OBS und rufe im Webbrowser meinen WebServer **http://192.168.55.101/** auf.  
 
-Alternativ könnten wir uns auch mit ffmpeg einen Teststream erstellen. Hier ein aufwendigeres Beispiel für ein Testbild mit eingeblendeter Uhrzeit (localtime), Dauer des Streams (pts) und einem Sinuston (sine) und einem Beep jede Sekunde:
+Alternativ könnten wir uns auch mit ffmpeg einen Teststream erstellen. Hier ein aufwendigeres Beispiel für ein Testbild mit eingeblendeter Uhrzeit (localtime), Dauer des Streams (pts) und einem Stereo Sinuston (sine) und einem Beep jede Sekunde:
 ```
-ffmpeg -loglevel error -re -f lavfi -i smptehdbars=size=1920x1080:rate=60 -f lavfi -i sine=frequency=1000:sample_rate=48000:beep_factor=4 -ac 2 -vf "drawtext=fontsize=140:fontcolor=white:x=1000:y=870:text='%{localtime\:%T}' , drawtext=fontsize=50:fontcolor=white:x=1000:y=1000:text='%{pts\\:hms}'" -c:v libx264 -g 60 -sc_threshold 0 -f flv rtmp://192.168.55.101/live
+ffmpeg -loglevel info -re -f lavfi -i smptehdbars=size=1920x1080:rate=60 -f lavfi -i sine=frequency=1000:sample_rate=48000:beep_factor=4 -ac 2 -vf "drawtext=fontsize=140:fontcolor=white:x=1000:y=870:text='%{localtime\:%T}' , drawtext=fontsize=50:fontcolor=white:x=1000:y=1000:text='%{pts\\:hms}'" -c:a aac -c:v libx264 -g 60 -sc_threshold 0 -f flv rtmp://192.168.55.101/live
 ```
 Quelle: https://github.com/richtertoralf/testStreamGenerator
 
