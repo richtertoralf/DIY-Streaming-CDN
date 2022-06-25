@@ -188,7 +188,7 @@ PS: Wir reden hier übrigens erstmal von wenigen Hundert Zuschauern. Wenn du vie
 
 >Das Thema Sicherheit ist nicht Bestandteil dieser Anleitung. Skalierung und Hochverfügbarkeit (für eine Hobbynutzung - z.B. Livestream für einen Verein, ohne YouTube) will ich aber schon ansprechen!  
 
-## PHP installieren und aktivieren
+## PHP auf dem Webserver und RestreamServer installieren und aktivieren
 PHP können wir in unserer Testumgebung nutzen, um mittels eigener Skripte Daten vom Server abzufragen und auf unseren Webseiten anzuzeigen. PHP kann aber auch genutzt werden, um z.B. unserem RestreamsServer über eine Weboberfläche zu konfigurieren und ihm z.B. die PUSH Adressen, nicht nur zu den WebServern, sondern auch zu YouTube mitzuteilen.  
 ```
 # Installieren
@@ -232,10 +232,10 @@ $ip_server = $_SERVER['SERVER_ADDR'];
 echo "Die Server IP Adresse ist: $ip_server";
 ?>
 ```
-Damit kann ich mir jetzt aus der Ferne z.B. mit dem Linux-Tool `curl` so die CPU-Auslastung anzeigen: `curl 192.168.55.101/php/serverADDR.php`  
+Damit kann ich mir jetzt aus der Ferne z.B. mit dem Linux-Tool `curl` so die IP Adresse des Webservers anzeigen lassen: `curl 192.168.55.101/php/serverADDR.php`  
 
-Damit kann ich mir zum Testen die jeweilige IP-Adresse des Webservers auch direkt im Browser anzeigen lassen.  
-Anschließend ergänze ich unsere **index.html Datei** mit `nano /var/www/html/index.html` um die Zeile: `<p> <?php include '/var/www/html/php/serverADDR.php';?> </p>`. Das sieht dann so aus:  
+Außerdem kann ich mir die jeweilige IP-Adresse des Webservers auch direkt im Browser anzeigen lassen.  
+Dazu ergänze ich unsere **index.html Datei** mit `nano /var/www/html/index.html` um die Zeile: `<p> <?php include '/var/www/html/php/serverADDR.php';?> </p>`. Das sieht dann so aus:  
 ```
 <body>
   <section>
@@ -270,5 +270,20 @@ else {
 }
 ?>
 ```
-**Aus Effizienzgründen ist es aber besser, diese Auswertelogik auf die Clientseite zu verschieben und mit z.B. JavaScript abzubilden, um die Auslastung des WebServers gering zu halten.**  
-Um zu testen, ob das Skript funktioniert, kann ich es mit `watch`und `curl` aufrufen: `watch curl 192.168.55.101/php/loadtimeCPU.php`. Damit sehe ich aller zwei Sekunden die Serverauslastung.
+Um zu testen, ob das Skript funktioniert, kann ich es mit `watch`und `curl` aufrufen: `watch curl 192.168.55.101/php/loadtimeCPU.php`. Damit sehe ich aller zwei Sekunden die Serverauslastung.  
+
+Um die CPU-Auslastung auf die Webseite zu bekommen, ergänze ich in unserer `index.php` unseres WebServers die Zeile, in der ich das PHP-Skript aufrufe: `<p> <?php include '/var/www/html/php/serverADDR.php';?> </p>` wie folgt:  
+`sudo nano /var/www/html/index.php`  
+```
+ <p> <?php include '/var/www/html/php/serverADDR.php'; echo " / "; include '/var/www/html/php/loadtimeCPU.php'; ?> </p>
+```
+Damit rufe ich hintereinander die beiden PHP-Skripte auf. Auf diese Weise bekomme ich aber auch nur einmal die CPU-Auslastung angezeigt.  
+
+Um die CPU-Auslastung aller zwei Sekunden zu bekommen, nutze ich in Folge paar Zeilen JavaScript und Ajax, also Oldscool der späten Neunziger Jahre ;-) 
+Auch aus Effizienzgründen und um die Auslastung des WebServers gering zu halten, ist es aber in unserem Fall besser, diese Auswertelogik auf die Clientseite zu verschieben und mit z.B. JavaScript abzubilden und nicht mit PHP auf dem Server abzuarbeiten.   
+
+Wir brauchen ein kleines Stück Java-Sript:  
+```
+mkdir /var/www/html/skripte
+nano /var/www/html/skripte/loadtimeCPU.js
+```
