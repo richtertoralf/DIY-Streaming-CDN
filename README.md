@@ -189,7 +189,7 @@ PS: Wir reden hier übrigens erstmal von wenigen Hundert Zuschauern. Wenn du vie
 >So wie die Thema Sicherheit, sind die Themen Skalierung und Hochverfügbarkeit nicht Bestandteil dieser Anleitung!  
 
 ## PHP installieren und aktivieren
-PHP können wir in unserer Testumgebung nutzen, um mittels eigener Skripte Daten vom Server abzufragen und auf unseren Webseiten anzuzeigen. PHP kann aber auch genutzt werden, um z.B. unserem RestreamsServer die PUSH Adressen über eine Weboberfläche mitzuteilen.  
+PHP können wir in unserer Testumgebung nutzen, um mittels eigener Skripte Daten vom Server abzufragen und auf unseren Webseiten anzuzeigen. PHP kann aber auch genutzt werden, um z.B. unserem RestreamsServer über eine Weboberfläche zu konfigurieren und ihm z.B. die PUSH Adressen, nicht nur zu den WebServern, sondern auch zu YouTube mitzuteilen.  
 ```
 # Installieren
 sudo apt install php-fpm
@@ -218,6 +218,7 @@ und in der folgenden Zeile "index.php" hinzufügen:
 Danach die Konfiguration testen mit `nginx-t` und anschließend `nginx -s reload`  
 
 ### Webserver um PHP ergänzen
+Im Folgenden folgen paar Spielereien mit PHP und JavaScript, die für unser "DIY-Streaming-CDN" nicht unbedingt notwendig sind, aber Spaß machen.
 #### IP-Adresse des Servers auf der Webseite anzeigen
 Ich erstelle ein zusätzliches Verzeichnis und eine php-Datei:  
 ```
@@ -231,7 +232,9 @@ $ip_server = $_SERVER['SERVER_ADDR'];
 echo "Die Server IP Adresse ist: $ip_server";
 ?>
 ```
-Damit kann ich mir zum Testen die jeweilige IP-Adresse des Webservers direkt im Browser anzeigen lassen.  
+Damit kann ich mir jetzt aus der Ferne z.B. mit dem Linux-Tool `curl` so die CPU-Auslastung anzeigen: `curl 192.168.55.101/php/serverADDR.php`  
+
+Damit kann ich mir zum Testen die jeweilige IP-Adresse des Webservers auch direkt im Browser anzeigen lassen.  
 Anschließend ergänze ich unsere **index.html Datei** mit `nano /var/www/html/index.html` um die Zeile: `<p> <?php include '/var/www/html/php/serverADDR.php';?> </p>`. Das sieht dann so aus:  
 ```
 <body>
@@ -246,5 +249,26 @@ Anschließend ergänze ich unsere **index.html Datei** mit `nano /var/www/html/i
 ```
 **Damit die PHP-Zeile funktioniert, benenne ich unsere index.html noch in index.php um: `mv index.html index.php`**  
 #### Serverauslastung (CPU Average) auf der Webseite anzeigen
-Wenn wir uns die aktuelle CPU-Auslastung z.B. aller 2 Sekunden anzeigen lassen wollen, benötigen wir zusätzlich noch paar Zeilen JavaScript.
-
+Wenn wir uns auch die aktuelle CPU-Auslastung z.B. aller 2 Sekunden anzeigen lassen wollen, benötigen wir zusätzlich ein weiteres PHP-Skript und noch paar Zeilen JavaScript.  
+Zuerst ein kleines PHP-Skript:
+`sudo nano /var/www/html/php/loadtimeCPU.php`  
+```
+<?php
+$loadtime = sys_getloadavg();
+echo 'CPU-AVG: ', $loadtime[0], ' -> ';
+if ($loadtime[0] >= 0.80) {
+  echo 'Achtung, der Server ist komplett ausgelastet.';
+}
+elseif ($loadtime[0] >= 0.50 && $loadtime[0] < 0.80) {
+  echo 'Der Server läuft langsam heiß.';
+}
+elseif ($loadtime[0] >= 0.30 && $loadtime[0] < 0.50) {
+  echo 'Alles ist im grünen Bereich.';
+}
+else {
+  echo 'Dem Server ist es langweilig.';
+}
+?>
+```
+**Aus Effizienzgründen ist es aber besser, diese Auswertelogik auf die Clientseite zu verschieben und mit z.B. JavaScript abzubilden, um die Auslastung des WebServers gering zu halten.**  
+Um zu testen, ob das Skript funktioniert, kann ich es mit `watch`und `curl` aufrufen: `watch curl 192.168.55.101/php/loadtimeCPU.php`. Damit sehe ich aller zwei Sekunden die Serverauslastung.
