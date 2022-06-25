@@ -20,6 +20,7 @@ Ich habe als Basis für die WebServer und RestreamServer Ubuntu 20.04 LTS genutz
 `cat /etc/*release` -> **PRETTY_NAME="Ubuntu 20.04.4 LTS"**  
 
 ## WebServer
+Ich fange zuerst mit einem Webserver an.  
 >HTTP Live Streaming mit HLS  
 
 Quellen:  
@@ -143,8 +144,17 @@ Mit `nano /var/www/html/index.html` eine Webseite erstellen, indem du das Folgen
 
 Mein WebServer-01 in VirtualBox hat die IP-Adresse **192.168.55.101**  
 Die Statistikdaten kannn ich im Browser so abrufen: **http://192.168.55.101:8080/stat** 
-Die Webseite mit dem Videostream kann ich mir so anzeigen lassen: **http://192.168.55.101/**  
+Die Webseite mit dem Videostream kann ich mir so anzeigen lassen: **http://192.168.55.101/**   
+Dazu benötige ich aber erst noch einen Videostream. Zum Testen kann ich mir dazu z.B. per **OBS Studio** einen Stream zum Webserver schicken. Dazu öffne ich in OBS-Studio die Einstellungen -> Stream -> und gebe hinter Server die Adresse unseres Webservers und den Namen unserer rtmp-Application ein: **rtmp://192.168.55.101/live** Danach starte ich den Stream in OBS und rufe im Webbrowser meinen WebServer **http://192.168.55.101/** auf.  
 
+Alternativ könnten wir uns auch mit ffmpeg einen Teststream erstellen. Hier ein aufwendigeres Beispiel für ein Testbild mit eingeblendeter Uhrzeit (localtime), Dauer des Streams (pts) und einem Sinuston (sine) und einem Beep jede Sekunde:
+```
+ffmpeg -loglevel error -re -f lavfi -i smptehdbars=size=1920x1080:rate=60 -f lavfi -i sine=frequency=1000:sample_rate=48000:beep_factor=4 -ac 2 -vf "drawtext=fontsize=140:fontcolor=white:x=1000:y=870:text='%{localtime\:%T}' , drawtext=fontsize=50:fontcolor=white:x=1000:y=1000:text='%{pts\\:hms}'" -c:v libx264 -g 60 -sc_threshold 0 -f flv rtmp://192.168.55.101/live
+```
+Quelle: https://github.com/richtertoralf/testStreamGenerator
+
+
+Da wir aber mehrere WebServer nutzen wollen, benötigen wir davorgeschaltet noch einen RestreamServer, welcher unseren Stream von OBS Studio vervielfältigt und zu mehreren Webservern sendet (per push).
 ## RestreamServer 
 ```
 sudo apt install nginx
@@ -179,7 +189,7 @@ PS: Wir reden hier übrigens erstmal von wenigen Hundert Zuschauern. Wenn du vie
 >So wie die Thema Sicherheit, sind die Themen Skalierung und Hochverfügbarkeit nicht Bestandteil dieser Anleitung!  
 
 ## PHP installieren und aktivieren
-PHP können wir nutzen, um eigene Skripte für die automatische Skalierung zu verwenden.
+PHP können wir in unserer Testumgebung nutzen, um mittels eigener Skripte Daten vom Server abzufragen und auf unseren Webseiten anzuzeigen. PHP kann aber auch genutzt werden, um z.B. unserem RestreamsServer die PUSH Adressen über eine Weboberfläche mitzuteilen.  
 ```
 # Installieren
 sudo apt install php-fpm
@@ -207,8 +217,9 @@ und in der folgenden Zeile "index.php" hinzufügen:
 ```
 Danach die Konfiguration testen mit `nginx-t` und anschließend `nginx -s reload`  
 
-## Webserver um PHP ergänzen
-Ich erstelle ein Verzeichnis und eine php-Datei:  
+### Webserver um PHP ergänzen
+#### IP-Adresse des Servers auf der Webseite anzeigen
+Ich erstelle ein zusätzliches Verzeichnis und eine php-Datei:  
 ```
 mkdir /var/www/html/php
 nano /var/www/html/php/serverADDR.php
@@ -220,7 +231,7 @@ $ip_server = $_SERVER['SERVER_ADDR'];
 echo "Die Server IP Adresse ist: $ip_server";
 ?>
 ```
-Damit kann ich mir zum Testen z.B. die jeweilige IP-Adresse des Webservers direkt im Browser anzeigen lassen.  
+Damit kann ich mir zum Testen die jeweilige IP-Adresse des Webservers direkt im Browser anzeigen lassen.  
 Anschließend ergänze ich unsere **index.html Datei** mit `nano /var/www/html/index.html` um die Zeile: `<p> <?php include '/var/www/html/php/serverADDR.php';?> </p>`. Das sieht dann so aus:  
 ```
 <body>
@@ -233,4 +244,7 @@ Anschließend ergänze ich unsere **index.html Datei** mit `nano /var/www/html/i
   </section>
 </body>
 ```
-**Damit die PHP-Zeile funktioniert, benenne ich die index.html noch in index.php um: `mv index.html index.php`**  
+**Damit die PHP-Zeile funktioniert, benenne ich unsere index.html noch in index.php um: `mv index.html index.php`**  
+#### Serverauslastung (CPU Average) auf der Webseite anzeigen
+Wenn wir uns die aktuelle CPU-Auslastung z.B. aller 2 Sekunden anzeigen lassen wollen, benötigen wir zusätzlich noch paar Zeilen JavaScript.
+
