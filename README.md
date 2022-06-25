@@ -186,7 +186,7 @@ Im Produktiveinsatz werden hier per Script automatisch weitere Server eingebunde
 Ich kann grundsätzlich in zwei Richtungen Skalieren. Ich kann z.B. die Leistung der einzelnen Webserver vergrößern, indem ich z.B. mehr Kerne hinzufüge. Das Hauptproblemm ist vermutlich aber die Bandbreite. Üblicherweise ist die Bandbreite pro virtuellem Server beschränkt. Indem ich mehrere Webserver hochfahre und die Useranfragen auf die Webserver gleichmäßig verteile, kann ich den Bandbreitenflaschenhals umgehen. Hetzner betreibt z.B. in Europa an drei verschiedenen Standorten Rechenzentren. Dort könnte ich jeweils Webserver hochfahren und per RestreamServer mit dem Content versorgen.    
 PS: Wir reden hier übrigens erstmal von wenigen Hundert Zuschauern. Wenn du viele Tausend Zuschauer gleichzeitig erwartest, sind paar grundsätzliche Infrastrukturthemen mit dem Hoster zu klären.  
 
->So wie die Thema Sicherheit, sind die Themen Skalierung und Hochverfügbarkeit nicht Bestandteil dieser Anleitung!  
+>Das Thema Sicherheit ist nicht Bestandteil dieser Anleitung. Skalierung und Hochverfügbarkeit (für eine Hobbynutzung - z.B. Livestream für einen Verein, ohne YouTube) will ich aber schon ansprechen!  
 
 ## PHP installieren und aktivieren
 PHP können wir in unserer Testumgebung nutzen, um mittels eigener Skripte Daten vom Server abzufragen und auf unseren Webseiten anzuzeigen. PHP kann aber auch genutzt werden, um z.B. unserem RestreamsServer über eine Weboberfläche zu konfigurieren und ihm z.B. die PUSH Adressen, nicht nur zu den WebServern, sondern auch zu YouTube mitzuteilen.  
