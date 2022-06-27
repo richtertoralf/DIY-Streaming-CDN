@@ -282,8 +282,29 @@ Damit rufe ich hintereinander die beiden PHP-Skripte auf. Auf diese Weise bekomm
 Um die CPU-Auslastung aller zwei Sekunden zu bekommen, nutze ich in Folge paar Zeilen JavaScript und Ajax, also Oldscool der späten Neunziger Jahre ;-) 
 Auch aus Effizienzgründen und um die Auslastung des WebServers gering zu halten, ist es aber in unserem Fall besser, diese Auswertelogik auf die Clientseite zu verschieben und mit z.B. JavaScript abzubilden und nicht mit PHP auf dem Server abzuarbeiten.   
 
-Wir brauchen ein kleines Stück Java-Sript:  
+Wir brauchen ein kleines Stück Java-Skript:  
 ```
-mkdir /var/www/html/skripte
-nano /var/www/html/skripte/loadtimeCPU.js
+mkdir /var/www/html/scripts
+nano /var/www/html/scripts/loadtimeCPU.js
 ```
+```
+'use strict';
+(function () {
+
+    function loadtimeCPU() {
+        var xhttp = new XMLHttpRequest();
+        xhttp.onreadystatechange = function () {
+            if (this.readyState == 4 && this.status == 200) {
+                document.getElementById("loadtimeCPU").innerHTML =
+                    this.responseText;
+            }
+        };
+        xhttp.open("GET", "./php/loadtimeCPU.php", true);
+        xhttp.send();
+        setTimeout(loadtimeCPU, 1000);
+    }
+    document.addEventListener('DOMContentLoaded', loadtimeCPU);
+}());
+```
+Damit rufe ich jede Sekunde (1000 Milisekunden) das PHP-Skript loadtimeCPU.php auf und bekomme die durchschnittliche CPU-Auslastung des Servers der letzten Minute. Diesen Wert schreibe ich jede Sekunde in das HTML-Element mit der ID "loadtimeCPU". 
+
