@@ -306,5 +306,25 @@ nano /var/www/html/scripts/loadtimeCPU.js
     document.addEventListener('DOMContentLoaded', loadtimeCPU);
 }());
 ```
+Und eine Änderung in unserer `index.php`.  
+```
+    <header class="boxes">
+        <p>IPv4 address of the server: <?php include './php/serverADDR.php'; ?> </p>
+        <p id="loadtimeCPU">  </p>
+        <p id="currentTime"> 00:00:00 </p>
+    </header>
+```
+Dazu noch etwas CSS-Code:
+```
+        .boxes {
+            display: flex;
+            margin-left: 20px;
+        }
+
+        .boxes>p {
+            width: 33vw;
+            font-size: small;
+        }
+```
 Damit rufe ich jede Sekunde (1000 Milisekunden) das PHP-Skript loadtimeCPU.php auf und bekomme die durchschnittliche CPU-Auslastung des Servers der letzten Minute. Diesen Wert schreibe ich jede Sekunde in das HTML-Element mit der ID "loadtimeCPU". 
 
