@@ -375,3 +375,36 @@ und den Client arbeiten lassen, indem ich die Datei `/var/www/html/scripts/loadt
 
 // "De#e*vIthlapnISpu" klingonisch = "Diese Info hätte ich gern."
 ```
+#### aktuelle Uhrzeit auf der Webseite anzeigen
+Wenn ich mir so, mit ffmpeg ein Testbild sende:
+```
+ffmpeg -loglevel error -re -f lavfi -i smptehdbars=size=1920x1080:rate=60 -f lavfi -i sine=frequency=1000:sample_rate=48000:beep_factor=4 -ac 2 -vf "drawtext=fontsize=140:fontcolor=white:x=1000:y=870:text='%{localtime\:%T}' , drawtext=fontsize=50:fontcolor=white:x=1000:y=1000:text='%{pts\\:hms}'" -c:a aac -c:v libx264 -g 60 -sc_threshold 0 -f flv rtmp://192.168.55.101/live
+```
+bekomme ich im Testbild die Uhrzeit angezeigt, wann der Stream erstellt wurde.  
+Mit der Uhrzeit im Webbrowser kann ich dann sofort die Latenz zwischen Streamproduktion und Anzeige im Browser per HLS sehen.  
+Folgendes kleines Skript bring mir die Uhrzeit des Clientcomputers in den Browser:
+`sudo nano /var/www/html/scripts/currentTime.js`  
+```
+'use strict';
+(function () {
+
+    function time() {
+        var now = new Date(),
+            h = now.getHours(),
+            m = now.getMinutes(),
+            s = now.getSeconds();
+        m = leadingNull(m);
+        s = leadingNull(s);
+        document.getElementById('currentTime').innerHTML = `current time: ${h}:${m}:${s}`;
+        setTimeout(time, 500);
+    }
+
+    function leadingNull(number) {
+        number = (number < 10 ? '0' : '') + number;
+        return number;
+    }
+    document.addEventListener('DOMContentLoaded', time);
+}());
+```
+## LoadBalancer
+... folgt in Kürze
