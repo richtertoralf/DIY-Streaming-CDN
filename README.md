@@ -26,7 +26,8 @@ Ich fange zuerst mit einem Webserver an.
 Quellen:  
 https://www.digitalocean.com/community/tutorials/how-to-set-up-a-video-streaming-server-using-nginx-rtmp-on-ubuntu-20-04  
 https://github.com/arut/nginx-rtmp-module  
-https://nginx.org/
+https://nginx.org/  
+https://bitkeks.eu/blog/2020/03/desktop-video-streaming-server-obs-studio-nginx-rtmp-hls-videojs.html  
 ```
 sudo apt install nginx
 sudo apt install libnginx-mod-rtmp
@@ -44,8 +45,6 @@ rtmp {
 
                         hls on;
                         hls_path /var/www/html/stream/hls;
-                        hls_fragment 3;
-                        hls_playlist_length 60;
 
                         dash on;
                         dash_path /var/www/html/stream/dash;
@@ -53,7 +52,10 @@ rtmp {
         }
 }
 ```
-Per `sudo nano /etc/nginx/sites-available/rtmp` eine neue Datei mit folgendem Inhalt erstellen:
+weitere Infos zu den HLS-Direktiven: https://github.com/arut/nginx-rtmp-module/wiki/Directives#hls  
+und den DASH-Direktiven: https://github.com/arut/nginx-rtmp-module/wiki/Directives#mpeg-dash  
+
+Dann per `sudo nano /etc/nginx/sites-available/rtmp` eine neue Datei mit folgendem Inhalt erstellen:
 ```
 server {
     listen 8080;
@@ -115,18 +117,12 @@ Mit `nano /var/www/html/index.html` eine Webseite erstellen, indem du das Folgen
             color: white;
             font-family: Verdana, Geneva, sans-serif;
         }
-        h1 {
-            background-color: #1F1E1F;
-        }
-        h2 {
-            background-color: #3A393A;
-        }
         section {
             background-color: #464546;
         }
         .video-js {
             width: 95vw;
-            height: 95vh;
+            height: 90vh;
             margin-left: auto;
             margin-right: auto;
         }
@@ -134,11 +130,22 @@ Mit `nano /var/www/html/index.html` eine Webseite erstellen, indem du das Folgen
 </head>
 
 <body>
-    <script src="https://vjs.zencdn.net/7.19.2/video.js"></script>
-    <video id="my-player" class="video-js" controls="true" preload="true" autoplay="any" width="auto" height="auto" data-setup='{}'>
-      <source src="http://192.168.55.101/stream/hls/.m3u8" type="application/x-mpegURL"></source>
-    </video>
+    <section>
+        <video id="my-player" class="video-js" data-setup='{"controls": true, "preload": "auto", "autoplay": "muted", "liveui": true, "fluid": true}'>
+            <source src="http://192.168.55.101/stream/hls/.m3u8" type="application/x-mpegURL">
+            <!-- <source src="http://192.168.55.101/stream/dash/.mpd" type="application/dash+xml"> -->
+            </source>
+            <p class="vjs-no-js">
+                To view this video please enable JavaScript, and consider upgrading to a
+                web browser that
+                <a href="https://videojs.com/html5-video-support/" target="_blank">supports HTML5 video</a>
+            </p>
+        </video>
+        <script src="https://vjs.zencdn.net/7.19.2/video.js"></script>
+    </section>
 </body>
+
+</html>
 
 ```
 
