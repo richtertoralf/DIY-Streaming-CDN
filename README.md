@@ -168,10 +168,12 @@ Alternativ könnten wir uns auch mit ffmpeg einen Teststream erstellen. Hier ein
 ```
 ffmpeg -loglevel info -re -f lavfi -i smptehdbars=size=1920x1080:rate=60 -f lavfi -i sine=frequency=1000:sample_rate=48000:beep_factor=4 -ac 2 -vf "drawtext=fontsize=140:fontcolor=white:x=1000:y=870:text='%{localtime\:%T}' , drawtext=fontsize=50:fontcolor=white:x=1000:y=1000:text='%{pts\\:hms}'" -c:a aac -c:v libx264 -g 60 -sc_threshold 0 -f flv rtmp://192.168.55.101/live
 ```
-Quelle: https://github.com/richtertoralf/testStreamGenerator
+>Damit HLS funktioniert, muss das Audio im Format aac und das Video im Format h264 geliefert werden. Das erreich ich mit ffmpeg, indem ich **-c:a aac -c:v libx264** einfüge. In OBS-Studio sind dafür keine extra Einstellungen notwendig.  
 
+Zum Testen macht es Sinn, einen Teststream zu generieren. Hier eine Idee dazu: https://github.com/richtertoralf/testStreamGenerator  
 
-Da wir aber mehrere WebServer nutzen wollen, benötigen wir davorgeschaltet noch einen RestreamServer, welcher unseren Stream von OBS Studio vervielfältigt und zu mehreren Webservern sendet (per push).
+Da wir aber mehrere WebServer nutzen wollen, benötigen wir davorgeschaltet noch einen RestreamServer, welcher unseren Stream von OBS Studio vervielfältigt und dann zu mehreren Webservern (per push) senden kann.  
+
 ## RestreamServer 
 ```
 sudo apt install nginx
