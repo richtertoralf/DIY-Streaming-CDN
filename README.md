@@ -437,8 +437,49 @@ Wichtig sind beim Klonen mit VirtualBox, nachdem die Maschinen erstellt wurden, 
 - Maschinen-ID anpassen
 - SSH-Schlüssel anpassen
 ##### IP-Adressen anpassen
+Meine Webserver befinden sich bei mir alle in einem separatem virtuellen internen Netzwerk und sollen die IP-Adressen 192.168.55.101 bis .103 haben. Ich habe in diesen Netzwerksegment keinen DNS Server. Mein Router/Gateway hat die IP 192.168.55.1  
+Bei Ubuntu-Server 20.04 und 22.04 wird für die Netzwerkverwaltung Netplan genutzt. Auf meinen Rechnern befinden sich die Einstellungen hier: `/etc/netplan/00-installer-config.yaml`  
+So sieht der Dateiinhalt aus:
+```
+network:
+  ethernets:
+    enp0s3:
+      dhcp4: true
+    enp0s8:
+      addresses:
+        - 192.168.55.101/24
+      gateway4: 192.168.55.1
+      nameservers:
+        addresses:
+        - 8.8.8.8
+  version: 2
+```
+Es müssen auf den Maschinen jeweils nur die IP-Adressen angepasst werden.
 ##### Hostname anpassen
+zuerst `hostnamectl set-hostname webServer-1`  
+und dann in `/etc/hosts`
+```
+127.0.0.1 localhost
+127.0.1.1 webServer-1
+```
 ##### Maschinen-ID anpassen
-##### SSH-Schlüssel anpassen
+```
+# Variante für Debian
+rm -f /etc/machine-id
+rm -f /var/lib/dbus/machine-id
+systemd-machine-id-setup
+ln -sf /etc/machine-id /var/lib/dbus/
+```
+##### SSH-Schlüssel korrigieren
+rm -f /etc/ssh/ssh_host_*
+dpkg-reconfigure openssh-server
+#### Webserver testen
+Auf unserem RestreamServer haben wir in der `/etc/nginx/rtmp.conf` bereits folgende Befehle eingefügt:
+```
+      push rtmp://192.168.55.101/live;
+      push rtmp://192.168.55.102/live;
+      push rtmp://192.168.55.103/live;
+```
+Wir müssten jetzt per Browser alle drei WebServer aufrufen können und müssten jeweils den Teststream sehen.
 ### 2 LoadBalancer
 Ich fahre zwei weitere frische Ubuntu-Server Maschinen hoch. Für solche Testzwecke habe ich in VirtualBox eine Auswahl frischer Linux Maschinen, die ich mir bei Bedarf klone und dann anpasse.
