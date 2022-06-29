@@ -20,7 +20,7 @@ Ich habe als Basis für die WebServer und RestreamServer Ubuntu 20.04 LTS genutz
 `cat /etc/*release` -> **PRETTY_NAME="Ubuntu 20.04.4 LTS"**  
 
 ## WebServer
-![Alt Screenshot WebServer](VideoJS-Testscreen_2022-06-29 205310.png "Screenshot WebServer")
+![Alt Screenshot WebServer](https://github.com/richtertoralf/DIY-Streaming-CDN/blob/5f4263d7f8adb5243a7afe338c76b493c946d272/VideoJS-Testscreen_2022-06-29%20205310.png "Screenshot WebServer")
 Ich fange zuerst mit einem Webserver an.  
 >HTTP Live Streaming mit HLS  
 
