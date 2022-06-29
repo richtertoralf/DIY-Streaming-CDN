@@ -410,7 +410,7 @@ ffmpeg -loglevel error -re -f lavfi -i smptehdbars=size=1920x1080:rate=60 -f lav
 bekomme ich im Testbild die Uhrzeit angezeigt, wann der Stream erstellt wurde.  
 Mit der Uhrzeit im Webbrowser kann ich dann sofort die Latenz zwischen Streamproduktion und Anzeige im Browser per HLS sehen.  
 Folgendes kleines Skript bring mir die Uhrzeit des Clientcomputers in den Browser:
-`sudo nano /var/www/html/scripts/currentTime.js`  
+`nano /var/www/html/scripts/currentTime.js`  
 ```
 'use strict';
 (function () {
