@@ -20,9 +20,10 @@ Ich habe als Basis für die WebServer und RestreamServer Ubuntu 20.04 LTS genutz
 `cat /etc/*release` -> **PRETTY_NAME="Ubuntu 20.04.4 LTS"**  
 
 ## WebServer
+>HTTP Live Streaming mit HLS und DASH  
+
 ![Alt Screenshot WebServer](https://github.com/richtertoralf/DIY-Streaming-CDN/blob/5f4263d7f8adb5243a7afe338c76b493c946d272/VideoJS-Testscreen_2022-06-29%20205310.png "Screenshot WebServer")
 Ich fange zuerst mit einem Webserver an.  
->HTTP Live Streaming mit HLS und DASH   
 
 Quellen und weitere Anleitungen zur Inspiration:  
 https://www.digitalocean.com/community/tutorials/how-to-set-up-a-video-streaming-server-using-nginx-rtmp-on-ubuntu-20-04  
