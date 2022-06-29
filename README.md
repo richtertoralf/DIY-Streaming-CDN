@@ -428,4 +428,17 @@ Folgendes kleines Skript bring mir die Uhrzeit des Clientcomputers in den Browse
 }());
 ```
 ## LoadBalancer
-... folgt in Kürze
+**Hochverfügbarkeit mit zwei Servern (Master und Backup), jeweils mit Nginx und Keepalived mit virtueller IP-Adresse**
+### 3 WebServer
+Dazu klonen wir unseren WebServer-1. Ich nutze für dieses Beispiel virtuelle Maschinen auf meinem PC. Dazu nutze ich VirtualBox. Das klonen geht über das Linux Terminal oder per Windows Powershell, je nachdem welches Betriebssystem als Host genutzt wird oder über die GUI. Dazu gibt es im Netz jede Menge Anleitungen, deshalb gibt es dazu hier keine weiteren Infos. 
+Wichtig sind beim Klonen mit VirtualBox, nachdem die Maschinen erstellt wurden, aber noch folgende vier Schritte:
+- IP-Adressen anpassen
+- Hostname anpassen
+- Maschinen-ID anpassen
+- SSH-Schlüssel anpassen
+##### IP-Adressen anpassen
+##### Hostname anpassen
+##### Maschinen-ID anpassen
+##### SSH-Schlüssel anpassen
+### 2 LoadBalancer
+Ich fahre zwei weitere frische Ubuntu-Server Maschinen hoch. Für solche Testzwecke habe ich in VirtualBox eine Auswahl frischer Linux Maschinen, die ich mir bei Bedarf klone und dann anpasse.
