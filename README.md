@@ -176,7 +176,7 @@ Zum Testen macht es Sinn, einen Teststream zu generieren. Hier eine Idee dazu: h
 Da wir aber mehrere WebServer nutzen wollen, benötigen wir davorgeschaltet noch einen RestreamServer, welcher unseren Stream von OBS Studio vervielfältigt und dann zu mehreren Webservern (per push) senden kann.  
 
 ## RestreamServer 
-![Screenshot example](RestreamServer_example_2022-06-29 212322.png)
+![Screenshot example](https://github.com/richtertoralf/DIY-Streaming-CDN/blob/34e2c02c928d1720c32cad2ae74f9b211770fc94/RestreamServer_example_2022-06-29%20212322.png)
 ```
 sudo apt install nginx
 sudo apt install libnginx-mod-rtmp
