@@ -112,7 +112,7 @@ gunzip -c /usr/share/doc/libnginx-mod-rtmp/examples/stat.xsl.gz > /var/www/html/
 ln -s /etc/nginx/sites-available/rtmp /etc/nginx/sites-enabled/rtmp
 ```
 anschließend:
-`sudo systemctl reload nginx`  
+`sudo systemctl reload nginx` oder besser erst mit `sudo nginx -t` die Konfiguration testen.  
 
 Mit `nano /var/www/html/index.html` eine Webseite erstellen, indem du das Folgende in diese Datei einfügst:  
 ```
