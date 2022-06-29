@@ -114,9 +114,10 @@ ln -s /etc/nginx/sites-available/rtmp /etc/nginx/sites-enabled/rtmp
 anschließend:
 `sudo systemctl reload nginx` oder besser erst mit `sudo nginx -t` die Konfiguration testen.  
 
-#### Rechte anpassen
+#### Rechte für den Webserver anpassen
 `sudo addgroup $USER www-data`  
 `sudo chown -R $USER:www-data /var/www/html/`  
+`sudo chmod -R 750 /var/www/html/`   
 
 Mit `nano /var/www/html/index.html` eine Webseite erstellen, indem du das Folgende in diese Datei einfügst:  
 ```
