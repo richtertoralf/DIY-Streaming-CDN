@@ -278,7 +278,7 @@ Dazu ergänze ich unsere **index.html Datei** mit `nano /var/www/html/index.html
 #### Serverauslastung (CPU Average) auf der Webseite anzeigen
 Wenn wir uns auch die aktuelle CPU-Auslastung z.B. aller 2 Sekunden anzeigen lassen wollen, benötigen wir zusätzlich ein weiteres PHP-Skript und noch paar Zeilen JavaScript.  
 Zuerst ein kleines PHP-Skript:
-`sudo nano /var/www/html/php/loadtimeCPU.php`  
+`nano /var/www/html/php/loadtimeCPU.php`  
 ```
 <?php
 $loadtime = sys_getloadavg();
