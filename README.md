@@ -106,9 +106,10 @@ danach:
 
 Zusätzlich kann das Statistikmodul für Testzwecke aktiviert werden: 
 ```
-sudo mkdir /var/www/html/rtmp
-sudo gunzip -c /usr/share/doc/libnginx-mod-rtmp/examples/stat.xsl.gz > /var/www/html/rtmp/stat.xsl
-sudo ln -s /etc/nginx/sites-available/rtmp /etc/nginx/sites-enabled/rtmp
+sudo -i
+mkdir /var/www/html/rtmp
+gunzip -c /usr/share/doc/libnginx-mod-rtmp/examples/stat.xsl.gz > /var/www/html/rtmp/stat.xsl
+ln -s /etc/nginx/sites-available/rtmp /etc/nginx/sites-enabled/rtmp
 ```
 anschließend:
 `sudo systemctl reload nginx`  
