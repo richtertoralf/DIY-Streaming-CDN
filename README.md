@@ -115,9 +115,17 @@ anschließend:
 `sudo systemctl reload nginx` oder besser erst mit `sudo nginx -t` die Konfiguration testen.  
 
 #### Rechte für den Webserver anpassen
+Unter Ubuntu laufen nginx und auch php mit dem Benutzer/User "www-data". Um als Benutzer selbst die Dateien bearbeiten zu können, z.B. mit VisualStudio Code per SSH Remote-Zugriff, füge ich mich der Gruppe "www-data" hinzu.
 `sudo addgroup $USER www-data`  
-`sudo chown -R $USER:www-data /var/www/html/`  
-`sudo chmod -R 750 /var/www/html/`   
+~~sudo chown -R $USER:www-data /var/www/html/~~ Die Dateien sollten dem User "www-data" gehören und nicht "root".    
+Normalerweise sind die Rechte nach der Installation richtig gesetzt. Um sie im nachhinein zu korregieren, kann ich so die Rechte für die Verzeichnisse und die Dateien ändern.
+```
+cd /var/www/
+# Rechte für die Verzeichnisse setzen
+sudo find . -type d -exec chmod -v 755 {} \;
+# Rechte für die Dateien setzen 
+sudo find . -type f -exec chmod 644 {} \;
+```
 
 Mit `nano /var/www/html/index.html` eine Webseite erstellen, indem du das Folgende in diese Datei einfügst:  
 ```
