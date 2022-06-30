@@ -496,5 +496,7 @@ Auf unserem RestreamServer haben wir in der `/etc/nginx/rtmp.conf` bereits folge
       push rtmp://192.168.55.103/live;
 ```
 Wir müssten jetzt per Browser alle drei WebServer aufrufen können und müssten jeweils den Teststream sehen.
+![Screenshot WebServer](https://github.com/richtertoralf/DIY-Streaming-CDN/blob/1c3ba02b2d6566a4b6f04d5d318376250b9f7266/VideoJS-Testscreens_2022-06-30.png)  
+
 ### 2 LoadBalancer
 Ich fahre zwei weitere frische Ubuntu-Server Maschinen hoch. Für solche Testzwecke habe ich in VirtualBox eine Auswahl frischer Linux Maschinen, die ich mir bei Bedarf klone und dann anpasse.
