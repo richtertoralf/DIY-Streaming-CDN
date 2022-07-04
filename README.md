@@ -10,7 +10,7 @@ OBS-Studio --> RestreamServer -->|--->  WebServer-03 <---|                      
                                  |--->  WebServer-04 <---|--- Loadbalancer-02 <---|
                                  |--->  WebServer-05 <---|
 ```
-Als RestreamServer und WebServer will ich virtuelle Cloud Server nutzen. Diese gibt es z.B. bei Hetzner schon ab 4,- Euro im Monat bzw. für sehr wenige Cent pro Stunde. Unser System soll für den jeweiligen Livestream jeweils neu hochgefahren und danach wieder gelöscht werden, um die virtuellen Maschinen nur dann zu nutzen, wenn sie benötigt werden. dazu soll die Hetzner CLI zum Einsatz kommen.
+Als RestreamServer und WebServer will ich virtuelle Cloud Server nutzen. Diese gibt es z.B. bei Hetzner schon ab 4,- Euro im Monat bzw. für sehr wenige Cent pro Stunde. Unser System soll für den jeweiligen Livestream jeweils neu hochgefahren und danach wieder gelöscht werden, um die virtuellen Maschinen nur dann zu nutzen, wenn sie benötigt werden. Dazu soll die Hetzner CLI zum Einsatz kommen.
 Infos zu den Hetzner Cloud-Servern: https://www.hetzner.com/de/cloud?country=de und zur CLI: https://community.hetzner.com/tutorials/howto-hcloud-cli   
 Load-Balancer gibt es bei Hetzner übrigens auch schon fertig und für kleines Geld: https://www.hetzner.com/de/cloud/load-balancer  
 
