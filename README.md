@@ -129,19 +129,18 @@ sudo find . -type d -exec chmod -v 755 {} \;
 # Rechte für die Dateien setzen 
 sudo find . -type f -exec chmod 644 {} \;
 ```
-##### Zur Erinnerung, `chmod`und Rechte unter Linux:  
+**Zur Erinnerung, `chmod`und Rechte unter Linux:**   
 - Besitzer der Datei ->	1. Ziffer  
 - Gruppe der Datei ->	2. Ziffer  
 - Andere Benutzer -> 3. Ziffer  
-
 |Zahl:| 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 |
 |-|-|-|-|-|-|-|-|-|
 |Rechte:|keine|x|w|w+r|r|r+x|r+w|r+w+x|  
 
-x...ausführen  
-w...schreiben  
-r...lesen  
-Beispiel:  
+x...*ausführen*  
+w...*schreiben*  
+r...*lesen*  
+**Beispiel:**  
 **755**	Alle dürfen lesen und ausführen, der Eigentümer auch schreiben.  
 **644** Der Eigentümer darf lesen und schreiben, alle anderen nur lesen.  
 
