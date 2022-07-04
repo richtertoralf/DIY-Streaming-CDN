@@ -129,17 +129,19 @@ sudo find . -type d -exec chmod -v 755 {} \;
 # Rechte für die Dateien setzen 
 sudo find . -type f -exec chmod 644 {} \;
 ```
-Zur Erinnerung:  
+##### Zur Erinnerung, `chmod`und Rechte unter Linux:  
 - Besitzer der Datei ->	1. Ziffer  
 - Gruppe der Datei ->	2. Ziffer  
 - Andere Benutzer -> 3. Ziffer  
+
 |Zahl:| 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 |
-|-|-|-|-|-|-|-|-|
-|Rechte:|keine|x|w|w+r|r|r+x|r+w|r+w+x|
+|-|-|-|-|-|-|-|-|-|
+|Rechte:|keine|x|w|w+r|r|r+x|r+w|r+w+x|  
 x...ausführen  
 w...schreiben  
 r...lesen  
 
+### Webseite zur Auslieferung des Videostreams
 Mit `nano /var/www/html/index.html` eine Webseite erstellen, indem du das Folgende in diese Datei einfügst:  
 ```
 <!DOCTYPE html>
@@ -188,9 +190,11 @@ Mit `nano /var/www/html/index.html` eine Webseite erstellen, indem du das Folgen
 
 ```
 
+#### Testen
 Mein WebServer-01 in VirtualBox hat die IP-Adresse **192.168.55.101**  
 Die Statistikdaten kannn ich im Browser so abrufen: **http://192.168.55.101:8080/stat** 
 Die Webseite mit dem Videostream kann ich mir so anzeigen lassen: **http://192.168.55.101/**   
+
 Dazu benötige ich aber erst noch einen Videostream. Zum Testen kann ich mir dazu z.B. per **OBS Studio** einen Stream zum Webserver schicken. Dazu öffne ich in OBS-Studio die Einstellungen -> Stream -> und gebe hinter Server die Adresse unseres Webservers und den Namen unserer rtmp-Application ein: **rtmp://192.168.55.101/live** Danach starte ich den Stream in OBS und rufe im Webbrowser meinen WebServer **http://192.168.55.101/** auf.  
 
 Alternativ könnten wir uns auch mit ffmpeg einen Teststream erstellen. Hier ein aufwendigeres Beispiel für ein Testbild mit eingeblendeter Uhrzeit (localtime), Dauer des Streams (pts) und einem Stereo Sinuston (sine) und einem Beep jede Sekunde:
