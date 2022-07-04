@@ -130,9 +130,8 @@ sudo find . -type d -exec chmod -v 755 {} \;
 sudo find . -type f -exec chmod 644 {} \;
 ```
 **Zur Erinnerung, `chmod`und Rechte unter Linux:**   
-- Besitzer der Datei ->	1. Ziffer  
-- Gruppe der Datei ->	2. Ziffer  
-- Andere Benutzer -> 3. Ziffer  
+>Oktal-Modus: Die Rechte werden für den Dateibesitzer, die Dateigruppe und andere separat addiert. An jeder Stelle bedeutet ein gesetzter Wert, dass die Rechte gewährt und eine 0, dass sie entzogen werden. Die Rechte werden somit durch drei Stellen vollständig beschrieben; die erste Stelle gibt die Rechte des Eigentümers, die zweite die Rechte der Gruppe und die letzte Stelle die Rechte für alle übrigen an.  
+
 |Zahl:| 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 |
 |-|-|-|-|-|-|-|-|-|
 |Rechte:|keine|x|w|w+r|r|r+x|r+w|r+w+x|  
@@ -140,6 +139,7 @@ sudo find . -type f -exec chmod 644 {} \;
 x...*ausführen*  
 w...*schreiben*  
 r...*lesen*  
+
 **Beispiel:**  
 **755**	Alle dürfen lesen und ausführen, der Eigentümer auch schreiben.  
 **644** Der Eigentümer darf lesen und schreiben, alle anderen nur lesen.  
