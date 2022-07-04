@@ -478,13 +478,12 @@ Wichtig sind beim Klonen mit VirtualBox, nachdem die Maschinen erstellt wurden, 
 ##### IP-Adressen anpassen
 Meine Webserver befinden sich bei mir alle in einem separatem virtuellen internen Netzwerk und sollen die IP-Adressen 192.168.55.101 bis .103 haben. Ich habe in diesen Netzwerksegment keinen DNS Server. Mein Router/Gateway hat die IP 192.168.55.1  
 Bei Ubuntu-Server 20.04 und 22.04 wird für die Netzwerkverwaltung Netplan genutzt. Auf meinen Rechnern befinden sich die Einstellungen hier: `/etc/netplan/00-installer-config.yaml`  
-So sieht der Dateiinhalt aus:
+So sieht der Dateiinhalt für den WebServer-1 aus:
 ```
+# This is the network config written by 'subiquity'
 network:
   ethernets:
     enp0s3:
-      dhcp4: true
-    enp0s8:
       addresses:
         - 192.168.55.101/24
       gateway4: 192.168.55.1
