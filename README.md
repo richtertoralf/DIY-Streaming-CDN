@@ -1,6 +1,7 @@
+We are building our own content delivery network (CDN) for livestream delivery using only open source tools, such as OBS Studio for content creation and nginx as a restream server, web server and load balancer.
 # DIY-Streaming-CDN
->Wir bauen uns ein eigenes Content Delivery Network (CDN) für die Auslieferung von Livestreams und nutzen dazu ausschließlich Open Source Tools, wie z.B. OBS Studio für die Inhaltserstellung und nginx als Restreamserver, Webserver und Load Balancer.  
->We are building our own content delivery network (CDN) for livestream delivery using only open source tools, such as OBS Studio for content creation and nginx as a restream server, web server and load balancer.
+>Wir bauen uns ein eigenes Content Delivery Network (CDN) für die Auslieferung von Livestreams und nutzen dazu ausschließlich Open Source Tools, wie z.B. OBS Studio bzw. FFmpeg für die Inhaltserstellung und nginx als Restreamserver, Webserver und LoadBalancer und Keepalived als "Hochverfügbarkeitstool" für den LoadBalancer und den RestreamServer.    
+
 ```
 # Prinzipskizze
                                  |--->  WebServer-01 <---|
@@ -9,14 +10,14 @@ OBS-Studio --> RestreamServer -->|--->  WebServer-03 <---|                      
                                  |--->  WebServer-04 <---|--- Loadbalancer-02 <---|
                                  |--->  WebServer-05 <---|
 ```
-Als RestreamServer und WebServer will ich virtuelle Cloud Server nutzen. Diese gibt es z.B. bei Hetzner schon ab 4,- Euro im Monat bzw. für sehr wenige Cent pro Stunde. Unser System soll für den jeweiligen Livestream jeweils neu hochgefahren und danach wieder gelöscht werden, um die virtuellen Maschinen nur dann zu nutzen, wenn sie benötigt werden. 
-Infos zu den Hetzner Cloud-Servern: https://www.hetzner.com/de/cloud?country=de  
-Load-Balancer gibt es bei Hetzner auch schon fertig: https://www.hetzner.com/de/cloud/load-balancer  
+Als RestreamServer und WebServer will ich virtuelle Cloud Server nutzen. Diese gibt es z.B. bei Hetzner schon ab 4,- Euro im Monat bzw. für sehr wenige Cent pro Stunde. Unser System soll für den jeweiligen Livestream jeweils neu hochgefahren und danach wieder gelöscht werden, um die virtuellen Maschinen nur dann zu nutzen, wenn sie benötigt werden. dazu soll die Hetzner CLI zum Einsatz kommen.
+Infos zu den Hetzner Cloud-Servern: https://www.hetzner.com/de/cloud?country=de und zur CLI: https://community.hetzner.com/tutorials/howto-hcloud-cli   
+Load-Balancer gibt es bei Hetzner übrigens auch schon fertig und für kleines Geld: https://www.hetzner.com/de/cloud/load-balancer  
 
-**Ich empfehle, die einzelnen Server zuerst lokal, z.B. mit VirtualBox, zu testen, anzupassen und zu optimieren. Im Folgenden werden jeweils sehr einfache Konfigurationsbeispiele gezeigt. Vorausgesetzt wird ein grundlegendes Verständnis eines Linuxsystems.  
+**Ich werde, die einzelnen Server aber zuerst lokal, mit VirtualBox, bauen und testen, bevor ich in die Cloud gehe und die Hetzner CLI nutze. Im Folgenden werden jeweils sehr einfache Konfigurationsbeispiele gezeigt. Vorausgesetzt wird ein grundlegendes Verständnis eines Linuxsystems.  
 Ich werde nginx nicht erklären. Dafür gibt es z.B. hier aktuelle Infos:  
 https://www.nginx.com/resources/library/complete-nginx-cookbook/   
-Ich habe als Basis für die WebServer und RestreamServer Ubuntu 20.04 LTS genutzt.**  
+Als Basis Betriebssystem für die WebServer, den RestreamServer und die Loadbalancer habe ich Ubuntu 20.04 LTS genutzt.**  
 `cat /etc/*release` -> **PRETTY_NAME="Ubuntu 20.04.4 LTS"**  
 
 ## WebServer
@@ -114,12 +115,12 @@ ln -s /etc/nginx/sites-available/rtmp /etc/nginx/sites-enabled/rtmp
 anschließend:
 `sudo systemctl reload nginx` oder besser erst mit `sudo nginx -t` die Konfiguration testen.  
 
-#### Rechte für den Webserver anpassen
+#### Rechte für den Webserver anpassen (einfaches Beispiel)
 Unter Ubuntu laufen nginx und auch php mit dem Benutzer/User "www-data". Um als Benutzer selbst die Dateien bearbeiten zu können, z.B. mit VisualStudio Code per SSH Remote-Zugriff, füge ich mich der Gruppe "www-data" hinzu.  
 `sudo addgroup $USER www-data`  
 Dem User www-data sollten die Rechte an den statischen Webdateien auch tatsächlich gehören:  
 Schau mal mit `ls -al` nach und korrigiere gegebenenfalls mit:  
-`chown -R www-date:www-date /var/www/html
+`chown -R www-date:www-date /var/www/html`  
 Die Dateien sollten dem User "www-data" gehören und nicht "root". Das passiert, wenn du nicht als "normaler" User, sondern als "root" arbeitest.      
 Normalerweise sind die Rechte nach der Installation richtig gesetzt. Um sie im nachhinein zu korregieren, kannst du so die Rechte für die Verzeichnisse und die Dateien ändern.
 ```
@@ -143,6 +144,8 @@ r...*lesen*
 **Beispiel:**  
 **755**	Alle dürfen lesen und ausführen, der Eigentümer auch schreiben.  
 **644** Der Eigentümer darf lesen und schreiben, alle anderen nur lesen.  
+
+weitere Infos, siehe: https://wiki.ubuntuusers.de/chmod/  
 
 ### Webseite zur Auslieferung des Videostreams
 Mit `nano /var/www/html/index.html` eine Webseite erstellen, indem du das Folgende in diese Datei einfügst:  
@@ -463,7 +466,8 @@ Folgendes kleines Skript bring mir die Uhrzeit des Clientcomputers in den Browse
 }());
 ```
 ## LoadBalancer
-**Hochverfügbarkeit mit zwei Servern (Master und Backup), jeweils mit Nginx und Keepalived mit virtueller IP-Adresse**
+>Hochverfügbarkeit: Beispiel mit drei WebServern und zwei LoadBalance-Servern (Master und Backup). Als Loadbalancer will ich **Nginx** und für die bessere Verfügbarkeit der LoadBalance-Server **Keepalived** nutzen. Später soll auch noch die Funktion des RestreamServer "Hochverfügbar" gemacht werden.  
+
 ### 3 WebServer
 Dazu klonen wir unseren WebServer-1. Ich nutze für dieses Beispiel virtuelle Maschinen auf meinem PC. Dazu nutze ich VirtualBox. Das klonen geht über das Linux Terminal oder per Windows Powershell, je nachdem welches Betriebssystem als Host genutzt wird oder über die GUI. Dazu gibt es im Netz jede Menge Anleitungen, deshalb gibt es dazu hier keine weiteren Infos. 
 Wichtig sind beim Klonen mit VirtualBox, nachdem die Maschinen erstellt wurden, aber noch folgende vier Schritte:
@@ -518,5 +522,10 @@ Auf unserem RestreamServer haben wir in der `/etc/nginx/rtmp.conf` bereits folge
 Wir müssten jetzt per Browser alle drei WebServer aufrufen können und müssten jeweils den Teststream sehen.
 ![Screenshot WebServer](https://github.com/richtertoralf/DIY-Streaming-CDN/blob/1c3ba02b2d6566a4b6f04d5d318376250b9f7266/VideoJS-Testscreens_2022-06-30.png)  
 
-### 2 LoadBalancer
-Ich fahre zwei weitere frische Ubuntu-Server Maschinen hoch. Für solche Testzwecke habe ich in VirtualBox eine Auswahl frischer Linux Maschinen, die ich mir bei Bedarf klone und dann anpasse.
+### nginx LoadBalancer
+Infos: https://docs.nginx.com/nginx/admin-guide/load-balancer/http-load-balancer/  
+Ich fahre eine weitere frische Ubuntu-Server Maschine hoch. Für solche Testzwecke habe ich in VirtualBox eine Auswahl frischer Linux Maschinen, die ich mir bei Bedarf klone und dann anpasse.  
+*Warum Ubuntu und nicht Debian oder RockyLinux/CentOS? ... Dafür gibt es keinen besonderen Grund. Für die tägliche Arbeit ist es aber einfacher, nur eine Linux-Distribution zu benutzen.*
+
+### Hochverfügbarkeit per Keepalived
+https://www.keepalived.org/
