@@ -137,9 +137,13 @@ sudo find . -type f -exec chmod 644 {} \;
 |Zahl:| 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 |
 |-|-|-|-|-|-|-|-|-|
 |Rechte:|keine|x|w|w+r|r|r+x|r+w|r+w+x|  
+
 x...ausführen  
 w...schreiben  
 r...lesen  
+Beispiel:  
+**755**	Alle dürfen lesen und ausführen, der Eigentümer auch schreiben.  
+**644** Der Eigentümer darf lesen und schreiben, alle anderen nur lesen.  
 
 ### Webseite zur Auslieferung des Videostreams
 Mit `nano /var/www/html/index.html` eine Webseite erstellen, indem du das Folgende in diese Datei einfügst:  
