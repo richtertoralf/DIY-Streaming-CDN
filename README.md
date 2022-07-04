@@ -115,10 +115,13 @@ anschließend:
 `sudo systemctl reload nginx` oder besser erst mit `sudo nginx -t` die Konfiguration testen.  
 
 #### Rechte für den Webserver anpassen
-Unter Ubuntu laufen nginx und auch php mit dem Benutzer/User "www-data". Um als Benutzer selbst die Dateien bearbeiten zu können, z.B. mit VisualStudio Code per SSH Remote-Zugriff, füge ich mich der Gruppe "www-data" hinzu.
+Unter Ubuntu laufen nginx und auch php mit dem Benutzer/User "www-data". Um als Benutzer selbst die Dateien bearbeiten zu können, z.B. mit VisualStudio Code per SSH Remote-Zugriff, füge ich mich der Gruppe "www-data" hinzu.  
 `sudo addgroup $USER www-data`  
-~~sudo chown -R $USER:www-data /var/www/html/~~ Die Dateien sollten dem User "www-data" gehören und nicht "root".    
-Normalerweise sind die Rechte nach der Installation richtig gesetzt. Um sie im nachhinein zu korregieren, kann ich so die Rechte für die Verzeichnisse und die Dateien ändern.
+Dem User www-data sollten die Rechte an den statischen Webdateien auch tatsächlich gehören:  
+Schau mal mit `ls -al` nach und korrigiere gegebenenfalls mit:  
+`chown -R www-date:www-date /var/www/html
+Die Dateien sollten dem User "www-data" gehören und nicht "root". Das passiert, wenn du nicht als "normaler" User, sondern als "root" arbeitest.      
+Normalerweise sind die Rechte nach der Installation richtig gesetzt. Um sie im nachhinein zu korregieren, kannst du so die Rechte für die Verzeichnisse und die Dateien ändern.
 ```
 cd /var/www/
 # Rechte für die Verzeichnisse setzen
@@ -126,6 +129,16 @@ sudo find . -type d -exec chmod -v 755 {} \;
 # Rechte für die Dateien setzen 
 sudo find . -type f -exec chmod 644 {} \;
 ```
+Zur Erinnerung:  
+- Besitzer der Datei ->	1. Ziffer  
+- Gruppe der Datei ->	2. Ziffer  
+- Andere Benutzer -> 3. Ziffer  
+|Zahl:| 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 |
+|-|-|-|-|-|-|-|-|
+|Rechte:|keine|x|w|w+r|r|r+x|r+w|r+w+x|
+x...ausführen  
+w...schreiben  
+r...lesen  
 
 Mit `nano /var/www/html/index.html` eine Webseite erstellen, indem du das Folgende in diese Datei einfügst:  
 ```
