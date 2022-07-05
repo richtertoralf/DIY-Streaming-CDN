@@ -521,10 +521,47 @@ Auf unserem RestreamServer haben wir in der `/etc/nginx/rtmp.conf` bereits folge
 Wir müssten jetzt per Browser alle drei WebServer aufrufen können und müssten jeweils den Teststream sehen.
 ![Screenshot WebServer](https://github.com/richtertoralf/DIY-Streaming-CDN/blob/1c3ba02b2d6566a4b6f04d5d318376250b9f7266/VideoJS-Testscreens_2022-06-30.png)  
 
-### nginx LoadBalancer
+## nginx LoadBalancer
 Infos: https://docs.nginx.com/nginx/admin-guide/load-balancer/http-load-balancer/  
 Ich fahre eine weitere frische Ubuntu-Server Maschine hoch. Für solche Testzwecke habe ich in VirtualBox eine Auswahl frischer Linux Maschinen, die ich mir bei Bedarf klone und dann anpasse.  
 *Warum Ubuntu und nicht Debian oder RockyLinux/CentOS? ... Dafür gibt es keinen besonderen Grund. Für die tägliche Arbeit ist es aber einfacher, nur eine Linux-Distribution zu benutzen.*
+
+### Installieren
+```
+sudo apt update -y && sudo apt upgrade -y 
+sudo apt install nginx
+```
+### Konfigurieren
+`sudo nano /etc/nginx/nginx.conf`
+Vorhandenen Inhalt löschen und nur das Folgende stehen lassen bzw. neu einfügen:
+```
+worker_processes auto;
+pid /run/nginx.pid;
+events {
+        worker_connections 4096;
+        multi_accept on;
+}
+http {
+        access_log /var/log/nginx/access.log;
+        error_log /var/log/nginx/error.log;
+        upstream webServers {
+            server 192.168.55.101;
+            server 192.168.55.102;
+            server 192.168.55.103;
+        }
+        server {
+                location / {
+                add_header Access-Control-Allow-Origin "*" always;
+                proxy_pass http://webServers;
+                }
+        }
+}
+```
+`sudo rm /etc/nginx/sites-enabled/default`  
+Neustarten: `systemctl restart nginx.service`
+Theoretisch müsste es jetzt funktionieren. Die Webseiten werden aufgebaut, aber es gibt keinen Stream. Irgendwetwas stimmt also noch nicht. Folgende Fehlermeldungen bekommen ich im Browser:  
+`Quellübergreifende (Cross-Origin) Anfrage blockiert: Die Gleiche-Quelle-Regel verbietet das Lesen der externen Ressource auf http://192.168.55.101/stream/hls/.m3u8. (Grund: CORS-Kopfzeile 'Access-Control-Allow-Origin' fehlt). Statuscode: 200.`
+
 
 ### Hochverfügbarkeit per Keepalived
 https://www.keepalived.org/
