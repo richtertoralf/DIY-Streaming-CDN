@@ -559,8 +559,27 @@ http {
 ```
 `sudo rm /etc/nginx/sites-enabled/default`  
 Neustarten: `systemctl restart nginx.service`
-Theoretisch müsste es jetzt funktionieren. Die Webseiten werden aufgebaut, aber es gibt keinen Stream. Irgendwetwas stimmt also noch nicht. Folgende Fehlermeldungen bekommen ich im Browser:  
+Theoretisch müsste es jetzt funktionieren. Die Webseiten werden aufgebaut, aber es gibt keinen Stream. Irgendetwas stimmt also noch nicht. Folgende Fehlermeldungen bekommen ich im Browser:  
 `Quellübergreifende (Cross-Origin) Anfrage blockiert: Die Gleiche-Quelle-Regel verbietet das Lesen der externen Ressource auf http://192.168.55.101/stream/hls/.m3u8. (Grund: CORS-Kopfzeile 'Access-Control-Allow-Origin' fehlt). Statuscode: 200.`
+Und bei der Netzwerkanalyse sehe ich:
+'GET ... 192.168.55.101  .m3u8 ... CORS Missing Allow Origin ...` 
+Wenn ich mir den Header ansehe:
+```
+~$ wget -S 192.168.55.201
+--2022-07-05 13:30:40--  http://192.168.55.201/
+Connecting to 192.168.55.201:80... connected.
+HTTP request sent, awaiting response...
+  HTTP/1.1 200 OK
+  Server: nginx/1.18.0 (Ubuntu)
+  Date: Tue, 05 Jul 2022 13:30:40 GMT
+  Content-Type: text/html; charset=UTF-8
+  Transfer-Encoding: chunked
+  Connection: keep-alive
+  Access-Control-Allow-Origin: *
+Length: unspecified [text/html]
+```
+Ich muss mir die Erstellung des Headers, insbesondere den CORS Header und vieleicht auch den MIME Typ, sowohl auf den WebServern und dem LoadBalancer nochmal anschauen....
+
 
 
 ### Hochverfügbarkeit per Keepalived
