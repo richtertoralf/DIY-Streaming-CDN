@@ -580,6 +580,7 @@ Length: unspecified [text/html]
 ```
 Ich muss mir die Erstellung des Headers, insbesondere den CORS Header und vieleicht auch den MIME Typ, sowohl auf den WebServern und dem LoadBalancer nochmal anschauen....
 
+Wenn ich mir die WebServer einzeln anschaue, sehe ich, das im Header `" Access-Control-Allow-Origin: '*'` fehlt. Ich werde deshalb die "nginx.conf" nochmal etwas überarbeiten. Mit dem Einfügen von ` add_header Access-Control-Allow-Origin "*" always;` im http-Context in der nginx.conf, funktioniert jetzt unser Setting erstmal.
 
 
 ### Hochverfügbarkeit per Keepalived
