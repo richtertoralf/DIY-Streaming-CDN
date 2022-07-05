@@ -539,7 +539,6 @@ worker_processes auto;
 pid /run/nginx.pid;
 events {
         worker_connections 4096;
-        multi_accept on;
 }
 http {
         access_log /var/log/nginx/access.log;
