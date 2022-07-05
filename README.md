@@ -65,8 +65,34 @@ Zusätzlich könnte ich mit
 im Server-Block festlegen, das nur Streams aus einem bestimmten Netzwerkbereich oder von einem bestimmten Rechner akzeptiert und alle anderen Streams abgelehnt werden.  
 >Das macht aus Sicherheitsgründen Sinn, da ich es selbst schon mal erlebt habe, das mir Jemand einen Stream zu meinem RestreamingServer geschickt hat, den ich nicht wollte. Deswegen sollte übrigens auch der Anwendungsname "live" geändert werden, wenn der Server über das Internet erreichbar ist, denn Jeder, der die öffentliche IP-Adresse des Servers kennt, könnte sich mit `rtmp://<öffentliche IP>/live` den Stream z.B. im VLC-Player anzeigen lassen, wenn `live on;` eingeschaltet ist.  
 
-Weitere Infos zu den HLS-Direktiven: https://github.com/arut/nginx-rtmp-module/wiki/Directives#hls  
-und den DASH-Direktiven: https://github.com/arut/nginx-rtmp-module/wiki/Directives#mpeg-dash  
+**Ich nutze im Folgenden folgende Konfiguration:**
+```
+rtmp {
+        server {
+                listen 1935;
+                chunk_size 4096;
+                allow publish 127.0.0.1;
+                allow publish 192.168.55.0/24;
+                deny publish all;
+
+                access_log /var/log/nginx/access_rtmp.log;
+
+                application live {
+                        live off;
+                        record off;
+                        wait_key on;
+                        hls on;
+                        hls_path /var/www/html/stream/hls;
+                        hls_playlist_length 40m;
+
+                        dash on;
+                        dash_path /var/www/html/stream/dash;
+               }
+        }
+}
+```
+**Weitere Infos zu den obigen Direktiven, insbesondere HLS: https://github.com/arut/nginx-rtmp-module/wiki/Directives#hls  
+und den DASH-Direktiven: https://github.com/arut/nginx-rtmp-module/wiki/Directives#mpeg-dash**   
 
 Dann per `sudo nano /etc/nginx/sites-available/rtmp` eine neue Datei mit folgendem Inhalt erstellen:
 ```
@@ -102,6 +128,7 @@ types {
     application/dash+xml mpd;
 }
 ```
+**`add_header Access-Control-Allow-Origin *;` funktioniert so nicht richtig. Auch die Verwendung des Verzeichnisses `sites-available` ist nicht ganz up-to-date, zeigt aber eine Möglichkeit auf.**  
 danach:
 `sudo mkdir /var/www/html/stream`  
 
