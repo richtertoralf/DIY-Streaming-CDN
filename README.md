@@ -91,10 +91,18 @@ rtmp {
         }
 }
 ```
-**Weitere Infos zu den obigen Direktiven, insbesondere HLS: https://github.com/arut/nginx-rtmp-module/wiki/Directives#hls  
-und den DASH-Direktiven: https://github.com/arut/nginx-rtmp-module/wiki/Directives#mpeg-dash**   
+**Weitere Infos zu den obigen Direktiven, insbesondere HLS:  
+https://github.com/arut/nginx-rtmp-module/wiki/Directives#hls  
+und den DASH-Direktiven:  
+https://github.com/arut/nginx-rtmp-module/wiki/Directives#mpeg-dash**   
 
-Dann per `sudo nano /etc/nginx/sites-available/rtmp` eine neue Datei mit folgendem Inhalt erstellen:
+Außerdem in der `/etc/nginx.nginx.conf` am Ende des **http-Block** folgende Direktiven für den Header, insbesondere "CORS" einfügen:  
+```
+        add_header 'Cache-Control' 'no-cache';
+        add_header Access-Control-Allow-Origin "*" always;
+```
+
+Dann per `sudo nano /etc/nginx/sites-available/rtmp.conf` eine neue Datei mit folgendem Inhalt erstellen:
 ```
 server {
     listen 8080;
@@ -113,34 +121,33 @@ server {
     location /control {
         rtmp_control all;
     }
-}
 
-server {
-    listen 8088;
-
+    # stream root
     location / {
-        add_header Access-Control-Allow-Origin *;
         root /var/www/html/stream;
     }
-}
 
-types {
-    application/dash+xml mpd;
+    types {
+        application/dash+xml mpd;
+        application/vnd.apple.mpegurl m3u8;
+    }
+
 }
 ```
-**`add_header Access-Control-Allow-Origin *;` funktioniert so nicht richtig. Auch die Verwendung des Verzeichnisses `sites-available` ist nicht ganz up-to-date, zeigt aber eine Möglichkeit auf.**  
-danach:
+danach noch das Verzeichnis für die Streams anlegen:   
 `sudo mkdir /var/www/html/stream`  
 
 Zusätzlich kann das Statistikmodul für Testzwecke aktiviert werden: 
 ```
-sudo -i
 mkdir /var/www/html/rtmp
 gunzip -c /usr/share/doc/libnginx-mod-rtmp/examples/stat.xsl.gz > /var/www/html/rtmp/stat.xsl
+```
+und jetzt noch die **rtmp.conf** verlinken:
+```
 ln -s /etc/nginx/sites-available/rtmp /etc/nginx/sites-enabled/rtmp
 ```
 anschließend:
-`sudo systemctl reload nginx` oder besser erst mit `sudo nginx -t` die Konfiguration testen.  
+`sudo systemctl reload nginx` oder besser erst mit `sudo nginx -t` die Konfiguration testen und dann mit `sudo nginx -s reload` die neue Konfiguration laden.   
 
 #### Rechte für den Webserver anpassen (einfaches Beispiel)
 Unter Ubuntu laufen nginx und auch php mit dem Benutzer/User "www-data". Um als Benutzer selbst die Dateien bearbeiten zu können, z.B. mit VisualStudio Code per SSH Remote-Zugriff, füge ich mich der Gruppe "www-data" hinzu.  
@@ -585,32 +592,10 @@ http {
 }
 ```
 `sudo rm /etc/nginx/sites-enabled/default`  
-Neustarten: `systemctl restart nginx.service`
-Theoretisch müsste es jetzt funktionieren. Die Webseiten werden aufgebaut, aber es gibt keinen Stream. Irgendetwas stimmt also noch nicht. Folgende Fehlermeldungen bekommen ich im Browser:  
-`Quellübergreifende (Cross-Origin) Anfrage blockiert: Die Gleiche-Quelle-Regel verbietet das Lesen der externen Ressource auf http://192.168.55.101/stream/hls/.m3u8. (Grund: CORS-Kopfzeile 'Access-Control-Allow-Origin' fehlt). Statuscode: 200.`
-Und bei der Netzwerkanalyse sehe ich:
-'GET ... 192.168.55.101  .m3u8 ... CORS Missing Allow Origin ...` 
-Wenn ich mir den Header ansehe:
-```
-~$ wget -S 192.168.55.201
---2022-07-05 13:30:40--  http://192.168.55.201/
-Connecting to 192.168.55.201:80... connected.
-HTTP request sent, awaiting response...
-  HTTP/1.1 200 OK
-  Server: nginx/1.18.0 (Ubuntu)
-  Date: Tue, 05 Jul 2022 13:30:40 GMT
-  Content-Type: text/html; charset=UTF-8
-  Transfer-Encoding: chunked
-  Connection: keep-alive
-  Access-Control-Allow-Origin: *
-Length: unspecified [text/html]
-```
-Ich muss mir die Erstellung des Headers, insbesondere den CORS Header und vieleicht auch den MIME Typ, sowohl auf den WebServern und dem LoadBalancer nochmal anschauen....
-
-Wenn ich mir die **WebServer** einzeln anschaue, sehe ich, das im Header `" Access-Control-Allow-Origin: '*'` fehlt. Ich werde deshalb die "nginx.conf" dort nochmal etwas überarbeiten. Mit dem Einfügen von ` add_header Access-Control-Allow-Origin "*" always;` im http-Context in der nginx.conf, funktioniert jetzt unser Setting erstmal.
+Neustarten: `systemctl restart nginx.service`  
 
 #### Auswahl einer Load-Balancing-Methode
-Wenn auf einer Webseite ständig Inhalte aktualisiert werden, z.B. wenn per JavaScript und Ajax PHP-Skripte aufgerufen werden, macht es Sinn, das der Zugriff immer zum  selben WebServer erfogt. Dafür bietet sich die IP-Hash Methode an.
+Wenn auf einer Webseite ständig Inhalte aktualisiert werden, z.B. wenn per JavaScript und Ajax PHP-Skripte aufgerufen werden, macht es Sinn, das der Zugriff immer zum  selben WebServer erfogt. Dafür bietet sich die IP-Hash Methode (`ip_hash`) an.
 >IP-Hash – Der Server, an den eine Anfrage gesendet wird, wird anhand der Client-IP-Adresse bestimmt. In diesem Fall werden entweder die ersten drei Oktetts der IPv4-Adresse oder die gesamte IPv6-Adresse zur Berechnung des Hashwerts verwendet. Das Verfahren garantiert, dass Anfragen von derselben Adresse an denselben Server gelangen, es sei denn, er ist nicht verfügbar.  
 
 ### Hochverfügbarkeit per Keepalived
