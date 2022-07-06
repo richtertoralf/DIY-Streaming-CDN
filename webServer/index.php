@@ -7,10 +7,16 @@
     <link href="https://vjs.zencdn.net/7.19.2/video-js.css" rel="stylesheet" />
     <title>HTTP Live Streaming Example</title>
     <style>
+        header {
+            background-color: #464546;
+            height: 50px;
+        }
+
         body {
             background: #4C4C4C;
             color: white;
             font-family: Verdana, Geneva, sans-serif;
+            min-width: 700px;
         }
 
         /*
@@ -29,12 +35,13 @@
 
         .boxes {
             display: flex;
-            margin-left: 20px;
         }
 
         .boxes>p {
-            width: 33vw;
+            width: 25vw;
+            margin-left: 10px;
             font-size: small;
+            min-width: 175px;
         }
 
         .video-js {
@@ -46,12 +53,14 @@
     </style>
     <script type="text/javascript" src="./scripts/currentTime.js"></script>
     <script type="text/javascript" src="./scripts/loadtimeCPU.js"></script>
+    <script type="text/javascript" src="./scripts/diskFree.js"></script>
 </head>
 
 <body>
     <header class="boxes">
         <p>IPv4 address of the server: <?php include './php/serverADDR.php'; ?> </p>
         <p id="loadtimeCPU"> </p>
+        <p id="disk_use_space_pct"> </p>
         <p id="currentTime"> 00:00:00 </p>
     </header>
     <section>
