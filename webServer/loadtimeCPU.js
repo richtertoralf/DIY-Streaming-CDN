@@ -7,7 +7,7 @@
       if (this.readyState == 4 && this.status == 200) {
         let request = this.responseText;
         let requestTXT = 'CPU-AVG: No values available';
-        console.log(request);
+        // console.log(request);
         if (isNaN(parseFloat(request))) {
           document.getElementById("loadtimeCPU").innerHTML = 'CPU-AVG: De#e*vIthlapnISpu';
         } else {
@@ -30,7 +30,7 @@
     };
     xhttp.open("GET", "./php/loadtimeCPU.php", true);
     xhttp.send();
-    setTimeout(loadtimeCPU, 1000);
+    setTimeout(loadtimeCPU, 4000);
   }
   document.addEventListener('DOMContentLoaded', loadtimeCPU);
 }());
