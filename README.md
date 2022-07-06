@@ -571,6 +571,7 @@ http {
         access_log /var/log/nginx/access.log;
         error_log /var/log/nginx/error.log;
         upstream webServers {
+            ip_hash;
             server 192.168.55.101;
             server 192.168.55.102;
             server 192.168.55.103;
@@ -608,6 +609,9 @@ Ich muss mir die Erstellung des Headers, insbesondere den CORS Header und vielei
 
 Wenn ich mir die **WebServer** einzeln anschaue, sehe ich, das im Header `" Access-Control-Allow-Origin: '*'` fehlt. Ich werde deshalb die "nginx.conf" dort nochmal etwas überarbeiten. Mit dem Einfügen von ` add_header Access-Control-Allow-Origin "*" always;` im http-Context in der nginx.conf, funktioniert jetzt unser Setting erstmal.
 
+#### Auswahl einer Load-Balancing-Methode
+Wenn auf einer Webseite ständig Inhalte aktualisiert werden, z.B. wenn per JavaScript und Ajax PHP-Skripte aufgerufen werden, macht es Sinn, das der Zugriff immer zum  selben WebServer erfogt. Dafür bietet sich die IP-Hash Methode an.
+>IP-Hash – Der Server, an den eine Anfrage gesendet wird, wird anhand der Client-IP-Adresse bestimmt. In diesem Fall werden entweder die ersten drei Oktetts der IPv4-Adresse oder die gesamte IPv6-Adresse zur Berechnung des Hashwerts verwendet. Das Verfahren garantiert, dass Anfragen von derselben Adresse an denselben Server gelangen, es sei denn, er ist nicht verfügbar.  
 
 ### Hochverfügbarkeit per Keepalived
 https://www.keepalived.org/
