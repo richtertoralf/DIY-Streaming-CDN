@@ -19,6 +19,8 @@ Ich werde nginx nicht erklären. Dafür gibt es z.B. hier aktuelle Infos:
 https://www.nginx.com/resources/library/complete-nginx-cookbook/   
 Als Basis Betriebssystem für die WebServer, den RestreamServer und die Loadbalancer habe ich Ubuntu 20.04 LTS genutzt.**  
 `cat /etc/*release` -> **PRETTY_NAME="Ubuntu 20.04.4 LTS"**  
+>Im Folgenden wird der Weg zum eigenen CDN per Hand gezeigt. Du wirst dabei feststellen, das schnell Fehler passieren und ein ziemlicher Aufwand anfällt. Auch eigene Shell-Skripte sind zu aufwendig, wenn auch eine gute Übung. Deswegen wird zum Erstellen der Maschinen **Vagrant** zum Einsatz kommen. Die Installation und Konfiguration werde ich per **Ansible** vornehmen. Das werde ich an anderer Stelle zeigen.
+
 
 ## WebServer
 >HTTP Live Streaming mit HLS und DASH  
