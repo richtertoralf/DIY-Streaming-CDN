@@ -1,0 +1,91 @@
+@startuml
+
+' CDN-Architektur von snowgames.live
+' - 1 Stream von OBS → ingest
+' - Verteilung via Restreamer zu 2 HLS-Servern
+' - 3 Webserver ziehen per HTTP Pull
+' - Zuschauerzugriff über Loadbalancer
+
+
+skinparam componentStyle rectangle
+skinparam defaultTextAlignment center
+skinparam nodeFontColor Black
+skinparam shadowing false
+
+' === Gruppe 1: Produktion ===
+package "Produktion" {
+  node "OBS-Client 1\nEncoder" as OBS {
+    component "OBS Studio"
+  }
+
+  node "Ingest-Server\nlocalhost\n(optional)" as Ingest {
+    component "mediamtx (SRT ingest)"
+  }
+
+  node "DatarheiRestreamer\nPublicIP+10.11.0.121" as R1 {
+    component "Datarhei\nRestreamer"
+  }
+
+
+  OBS -down-> Ingest : RTMP
+  Ingest -down-> R1 : SRT Push
+
+}
+
+' === Gruppe extern: YouTube ===
+package "YouTube extern" {
+  node "YouTube" as YT {
+    component "snowgames.live"
+  }
+
+  R1 -right-> YT : RTMP Push
+
+}
+
+' === Gruppe 2: HLS-Generatoren ===
+
+package "HLS-Server\n(nur intern erreichbar)" {
+  node "HLS-Server-1\n10.11.0.131" as HLS1 {
+    component "mediamtx HLS Generator" as HLS1c
+  }
+
+  node "HLS-Server-2\n10.11.0.132" as HLS2 {
+    component "mediamtx HLS Generator" as HLS2c
+  }
+
+  R1 -down-> HLS1 : SRT Push
+  R1 -down-> HLS2 : SRT Push
+
+}
+
+' === Gruppe 3: Webserver & Loadbalancer ===
+
+package "Webserver & Loadbalancer\n(öffentlich + intern)" {
+  node "Webserver-1\nPublic IP + 10.11.0.201" as Web1 {
+    component "NGINX Edge" as NGINX1
+  }
+  node "Webserver-2\nPublic IP + 10.11.0.202" as Web2 {
+    component "NGINX Edge" as NGINX2
+  }
+  node "Webserver-3\nPublic IP + 10.11.0.203" as Web3 {
+    component "NGINX Edge" as NGINX3
+  }
+node "Loadbalancer & DNS\nPublic IP" as LB {
+  component "HAProxy" as HA
+  component "PowerDNS" as PDNS
+}
+
+  LB -up-> Web1 : Zuschauerzugriff (HTTP)
+  LB -up-> Web2 : Zuschauerzugriff (HTTP)
+  LB -up-> Web3 : Zuschauerzugriff (HTTP)
+}
+
+Web1 -up-> HLS1 : HTTP Pull
+Web1 -up-> HLS2 : HTTP Pull
+Web2 -up-> HLS1 : HTTP Pull
+Web2 -up-> HLS2 : HTTP Pull
+Web3 -up-> HLS1 : HTTP Pull
+Web3 -up-> HLS2 : HTTP Pull
+
+
+@enduml
